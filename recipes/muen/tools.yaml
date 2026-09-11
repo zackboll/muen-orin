@@ -1,8 +1,8 @@
 checkoutSCM:
   scm: git
   url: ${MUEN_TOOLS_URL:-https://git.codelabs.ch/muen/tools.git}
-  branch: ${MUEN_TOOLS_BRANCH:-main}
-  commit: ${MUEN_TOOLS_COMMIT:-edea93181f14dfc5a9da4544194c4d11a2185217}
+  branch: ${MUEN_TOOLS_BRANCH:-component-source-event-arrays-vres-alloc}
+  commit: ${MUEN_TOOLS_COMMIT:-5cfd99d6e29705765f7fd708175e1eeff7a8e244}
 
 multiPackage:
   liballoc:
