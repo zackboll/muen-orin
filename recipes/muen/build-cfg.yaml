@@ -2,8 +2,8 @@
 checkoutSCM:
   scm: git
   url: https://git.codelabs.ch/muen/build-cfg.git
-  branch: main
-  commit: a9a9196b026b4dbbe02b026dc2c280ae95718475
+  branch: rh-update
+  commit: e93178ddaa16078e9437d4ded261df73cfb97755
 
 buildScript: |
   rsync -a --delete $1/ .
