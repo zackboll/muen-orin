@@ -3,8 +3,8 @@ inherit: [muen_component]
 checkoutSCM:
   scm: git
   url: https://git.codelabs.ch/muen/component/libs.git
-  branch: main
-  commit: bd101fdfcbdcb1c201b3b8462961e1004e34dbbf
+  branch: rh-upstream
+  commit: e2738b9b684e72630ccf7d7bf5f0c6765d5ee5c0
 
 multiPackage:
   muinitstub:
