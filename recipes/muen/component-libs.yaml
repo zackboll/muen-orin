@@ -4,7 +4,7 @@ checkoutSCM:
   scm: git
   url: https://git.codelabs.ch/muen/component/libs.git
   branch: rh-upstream
-  commit: e2738b9b684e72630ccf7d7bf5f0c6765d5ee5c0
+  commit: 2e03640d192daffa6190785cdd0d779da5c1e136
 
 multiPackage:
   muinitstub:
