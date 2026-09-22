@@ -64,7 +64,7 @@ multiPackage:
       # Copy all relevant lib deps here and create simple GPR file.
       for d in ${!BOB_DEP_PATHS[@]}; do
         DIR=${BOB_DEP_PATHS[$d]}
-        if [ -e ${DIR}/usr/share/gpr/*.gpr ]; then
+        if [[ -e ${DIR}/usr/share/gpr/*.gpr && -d ${DIR}/usr/include ]]; then
           # remove dependency from project path first
           GPR_PROJECT_PATH=$(echo "$GPR_PROJECT_PATH" | tr ':' '\n' | grep -v '$DIR' | paste -sd ':' -)
 
