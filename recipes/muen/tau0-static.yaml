@@ -41,6 +41,6 @@ multiPackage:
       export OBJ_DIR=$(pwd)/obj/
       export EXEC_DIR=$(pwd)/bin/
       export GPR_TARGET="x86_64-linux-gnu"
-      export GNATPROVE_EXTRA_ARGS="--assumptions --no-loop-unrolling --no-axiom-guard"
+      export GNATPROVE_EXTRA_ARGS="--assumptions --no-loop-unrolling --function-sandboxing=off"
     buildScript: |
       muenProof
