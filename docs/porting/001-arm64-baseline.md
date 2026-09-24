@@ -40,16 +40,19 @@ system toolchain replacement, or security-setting change was performed.
 
 Bob was installed according to its official documentation with
 `python3 -m venv /tmp/muen-task001-venv` and
-`python -m pip install BobBuildTool`. An initial attempt with the incorrect,
+`python -m pip install BobBuildTool==1.2.0`. An initial attempt with the incorrect,
 case-insensitive-looking name `bob-build-tool` failed because no such PyPI
 distribution exists; it made no repository or system change. The build obtains
 its own pinned compiler/tool packages through Bob.
 
 User namespaces were available (`kernel.unprivileged_userns_clone=1`, and a
-test `unshare --user --map-root-user true` exited 0). There was no `user.yaml`
-or `override_layers.yaml`. The README's command and normal development workspace
-were used exactly; no `--sandbox` option is documented there. `ci/run.sh` accepts
-an explicit `-s` to request Bob sandbox mode, but does not enable it by default.
+test `unshare --user --map-root-user true` exited 0). There was no `user.yaml`,
+`override_layers.yaml`, or `-D` override. The exact README command had no
+sandbox option, and `bob show --format json -f sandbox
+arm64-qemu-zcu102-minimal-debug` returned `{}` for the same configuration. Thus
+this was an unsandboxed Bob development build, although sandbox-toolchain
+packages remain dependencies in the graph. `ci/run.sh` can independently request
+sandbox mode with `-s`; that path was not used.
 
 ## Target and dependency path
 
@@ -80,19 +83,20 @@ All commands were run from the repository root with
 | `git submodule update --init --recursive` | 0 | Both declared submodules checked out at superproject-pinned SHAs. |
 | `bob layers update` | 0 | Four layers fetched at configured commits. |
 | `bob ls` | 0 | Requested target listed exactly. |
-| `bob query-scm -r ... arm64-qemu-zcu102-minimal-debug` | 0 | 177 SCM entries: 27 Git and 150 URL entries. |
+| `bob query-scm -r ... arm64-qemu-zcu102-minimal-debug` | 0 | 177 SCM entries: 27 Git and 150 URL entries, preserving SHA-1/SHA-256/SHA-512. |
 | `bob dev arm64-qemu-zcu102-minimal-debug` | 0 | Passed in 10m24s: 5 checkouts, 41 packages built, 67 downloaded. |
 | `contrib/runQemu.py -q arm64-qemu-zcu102-minimal-debug` | 1 | Blocked before QEMU startup: missing NCI `guestfs` Python/system dependency. |
 
-Full local logs (deliberately untracked) are under `/tmp`:
+Full local logs were copied from `/tmp` to the deliberately untracked evidence
+directory before corrective work:
 
-* `/tmp/muen-task001-bob-install-corrected.log`
-* `/tmp/muen-task001-bob-layers-update.log`
-* `/tmp/muen-task001-bob-ls.log`
-* `/tmp/muen-task001-scm.tsv`
-* `/tmp/muen-task001-bob-dev.log`
-* `/tmp/muen-task001-runQemu.log`
-* `/tmp/muen-task001-artifacts.log`
+* `/home/zboll/muen-task001-evidence/muen-task001-bob-install-corrected.log`
+* `/home/zboll/muen-task001-evidence/muen-task001-bob-layers-update.log`
+* `/home/zboll/muen-task001-evidence/muen-task001-bob-ls.log`
+* `/home/zboll/muen-task001-evidence/scm-all-digests.txt`
+* `/home/zboll/muen-task001-evidence/muen-task001-bob-dev.log`
+* `/home/zboll/muen-task001-evidence/muen-task001-runQemu.log`
+* `/home/zboll/muen-task001-evidence/muen-task001-artifacts.log`
 
 Representative layer evidence:
 
@@ -137,7 +141,9 @@ These outcomes are intentionally separate:
 * **Build:** **passed**. The final package contains `kernel`, `kernel.elf`,
   `BOOT.bin`, `sdcard.img`, the Linux image/DTB/initramfs, subject binaries, and
   generated policy artifacts. Binary archive misses correctly fell back to
-  local builds and were not failures.
+  local builds and were not failures. This is build-time validation only; it
+  does not validate runtime behavior of the kernel, GIC, timer, SMMU, scheduler,
+  subjects, or Linux.
 * **Boot:** **blocked before execution**. The launcher imports the x86 `VmQemu`
   helper unconditionally; that imports Python `guestfs`. The initialized NCI
   submodule's `setup_venv.sh` requires system package `python3-guestfs`, which
@@ -155,27 +161,55 @@ These outcomes are intentionally separate:
 * **Proof:** **not run**. Proof is a separate `*-proof` recipe; a debug build or
   Markdown lint result must not be reported as proof evidence.
 
-## Reproducibility limits
+## Source inventory and reproducibility limits
 
 The top-level SHA alone is insufficient. To reselect the observed source set:
 
-1. Check out the top-level SHA and initialize its two pinned submodules.
-2. Run `bob layers update`; verify the four layer SHAs from the manifest.
-3. Use Bob 1.2.0 and run the documented target without local overrides.
-4. Regenerate the graph with `bob query-scm -r` and compare Git commits and URL
-   digests with the manifest.
+1. Install exactly `BobBuildTool==1.2.0` in an isolated environment.
+2. Check out the top-level SHA and initialize its two pinned submodules.
+3. Run `bob layers update`; verify the four layer SHAs from the manifest.
+4. Ensure no user/override files or `-D` definitions are active and preserve the
+   recorded unsandboxed effective configuration.
+5. Run the exact query and transformation commands recorded in the manifest and
+   compare all 177 ordered records.
 
 All four layers and 26 of 27 recursive Git SCMs specify commits. The remaining
-Git SCM is tag-only (`sbsigntools` `v0.9.5`). More importantly, only 97 of 150
-URL SCM entries have a configured SHA-256; 53 are selected only by URL/version.
-Those mutable or unverifiable downloads prevent claiming a fully content-pinned
-source closure. Bob audit files and binary archives improve traceability for a
-particular build but do not add missing recipe pinning for a fresh build.
+Git SCM is tag-only (`sbsigntools` `v0.9.5`). Of 150 URL records, 98 configure
+SHA-256 or SHA-512 (97 SHA-256 and one SHA-512), and 52 configure SHA-1 only.
+No URL record lacks all three supported digest fields, and none has multiple
+configured digests. SHA-1-only selection is weaker than SHA-256/SHA-512 and the
+tag-only Git selection is not commit-addressed.
+
+The manifest distinguishes recipe configuration from build observation. The
+retained source audits directly record five clean Git checkouts at configured
+commits: kernel, systems, tools, components, and component-libs. The final audit
+contains 1,033 dependency references plus build/result identifiers. Many
+packages were restored from binary archives; their audit chains are provenance
+metadata, not evidence that this host checked out and independently hashed each
+source. No direct retained checkout/audit records the tag-only Git source's
+commit, so it remains unavailable rather than being reconstructed from the
+current remote tag. No bit-for-bit rebuild comparison was made, and this report
+does not claim a fully verified source closure.
 
 Source overrides already exist through ignored local files (`user.yaml` and
 `override_layers.yaml`), Bob `-D` definitions, and recipe variables such as
 `MUEN_COMMON_{URL,BRANCH,COMMIT}` and `MUEN_TOOLS_{URL,BRANCH,COMMIT}`. No
 override was used here.
+
+## GitHub CI evidence
+
+The tracked `.github/workflows/system_images.yml` is push-triggered and includes
+`arm64-qemu-zcu102-minimal-debug` in its build matrix. For reviewed head
+`0ea529e3552caeb958818ec0f08f55ee9590c012`, separate GitHub API queries returned:
+
+* zero check runs;
+* zero commit-status contexts; and
+* zero Actions workflow runs with that head SHA and `push` event.
+
+Additionally, `gh workflow list --all` returned no registered workflows. These
+are observations, not proof that workflows are absent from the repository, and
+no cause for the missing run was established. Local pre-commit results are
+lint/format validation only and are not system-image, runtime, or proof CI.
 
 ## References
 
