@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "study_date": "2026-09-24",
+  "scope": "Read-only Tegra234 platform contract for Jetson Orin Nano 8GB",
+  "reference_set": {
+    "nvidia_release": "Jetson Linux r36.4.4",
+    "installed_on_target": "unknown",
+    "uefi": {
+      "repository": "https://github.com/NVIDIA/edk2-nvidia.git",
+      "tag": "uefi-202405.3",
+      "commit": "350c50a65a7b30d916b8c1901ed940f6d69bbcaa"
+    },
+    "edk2": {
+      "repository": "https://github.com/NVIDIA/edk2.git",
+      "tag": "uefi-202405.3",
+      "commit": "338f5d9e7c525ab2ec0882bb6fc699f62d107b31"
+    },
+    "muen_arm64_kernel": "bb48b4c5ec7d33aba58edc2fc89d4d2996ca568f",
+    "muen_arm64_systems": "99f9e6264ef11af6ba7db66abedaa1b058683f33"
+  },
+  "sources": [
+    {
+      "id": "NVIDIA-BOOT-R3644",
+      "kind": "vendor_documentation",
+      "title": "Jetson Linux r36.4.4: Boot Architecture",
+      "revision": "r36.4.4 archive",
+      "url": "https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/AR/BootArchitecture.html",
+      "locator": "Jetson AGX Orin, Orin NX, and Orin Nano Boot Flow; BootROM; PSCROM; MB1; MB2; UEFI Cold Boot Sequence",
+      "accessed": "2026-09-24",
+      "download_sha256": "8570f43fa0211dec73d159dd750fa88332a377b71ff06305b881b764d24bb77f"
+    },
+    {
+      "id": "NVIDIA-UEFI-R3644",
+      "kind": "vendor_documentation",
+      "title": "Jetson Linux r36.4.4: UEFI Adaptation",
+      "revision": "r36.4.4 archive",
+      "url": "https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/SD/Bootloader/UEFI.html",
+      "locator": "Sources and Compilation; Boot Order Selection; Grub support; miniUEFI Support",
+      "accessed": "2026-09-24"
+    },
+    {
+      "id": "NVIDIA-NX-NANO-R3644",
+      "kind": "vendor_documentation",
+      "title": "Jetson Orin NX and Nano Series adaptation and bring-up",
+      "revision": "Jetson Linux r36.4.4 archive",
+      "url": "https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/HR/JetsonModuleAdaptationAndBringUp/JetsonOrinNxNanoSeries.html",
+      "locator": "Board Configuration; MB1 Configuration Changes; Porting the Linux Kernel Device Tree",
+      "accessed": "2026-09-24",
+      "download_sha256": "cdbff5a2f92e5dc5edc90588bc6f8ef7700428f96cf8612b3ac56708aa24a91a"
+    },
+    {
+      "id": "NVIDIA-ORIN-FEATURES-R3644",
+      "kind": "vendor_documentation",
+      "title": "Jetson Orin Series Software Features in Depth",
+      "revision": "Jetson Linux r36.4.4 archive",
+      "url": "https://docs.nvidia.com/jetson/archives/r36.4.4/DeveloperGuide/SO/JetsonOrinSeries.html",
+      "locator": "Tegra Combined UART",
+      "accessed": "2026-09-24",
+      "download_sha256": "6792b0fe934b9f94f94b9d0543bfb57d813bb6aade270709b37af00c15b75518"
+    },
+    {
+      "id": "NVIDIA-EDK2-R3644",
+      "kind": "vendor_source",
+      "title": "NVIDIA edk2-nvidia",
+      "release": "uefi-202405.3 (r36.4.4)",
+      "commit": "350c50a65a7b30d916b8c1901ed940f6d69bbcaa",
+      "url": "https://github.com/NVIDIA/edk2-nvidia/tree/350c50a65a7b30d916b8c1901ed940f6d69bbcaa",
+      "locator": "Silicon/NVIDIA/PrePi/AArch64/ModuleEntryPoint.S; PrePi/AArch64/ArchPrePi.c; Application/L4TLauncher/L4TLauncher.c; Library/PlatformResourceLib/T234ResourceConfig.c; Library/TegraSerialPortLib/TegraSerialPortLib.c; Library/TegraCombinedSerialPort/TegraCombinedSerialPortLib.c",
+      "accessed": "2026-09-24",
+      "release_archive_url": "https://github.com/NVIDIA/edk2-nvidia/releases/download/uefi-202405.3/edk2-nvidia-r36.4.4.tar.gz",
+      "release_archive_sha256": "a78472c537b6396c21326408c27ba12661b8d90e84a7da6e6c32741bd1417f75"
+    },
+    {
+      "id": "NVIDIA-EDK2-BASE-R3644",
+      "kind": "vendor_source",
+      "title": "NVIDIA fork of EDK2",
+      "release": "uefi-202405.3",
+      "commit": "338f5d9e7c525ab2ec0882bb6fc699f62d107b31",
+      "url": "https://github.com/NVIDIA/edk2/tree/338f5d9e7c525ab2ec0882bb6fc699f62d107b31",
+      "locator": "ArmPkg/ArmPkg.dec: AArch64 PcdArmScr and PcdArmNonSecModeTransition defaults",
+      "accessed": "2026-09-24"
+    },
+    {
+      "id": "UEFI-2.10",
+      "kind": "specification",
+      "title": "UEFI Specification",
+      "revision": "2.10",
+      "url": "https://uefi.org/specs/UEFI/2.10/",
+      "locator": "4.1 UEFI Image Entry Point; 4.6.1 EFI Configuration Table; 7.2.3 GetMemoryMap; 7.4.1 LoadImage; 7.4.2 StartImage; 7.4.6 ExitBootServices; Table 7.6",
+      "accessed": "2026-09-24"
+    },
+    {
+      "id": "LINUX-AARCH64-BOOT",
+      "kind": "implementation_contract",
+      "title": "Booting AArch64 Linux",
+      "revision": "Linux v6.1, commit 830b3c68c1fb1e9176028d02ef86f3cf76aa2476",
+      "url": "https://github.com/torvalds/linux/blob/830b3c68c1fb1e9176028d02ef86f3cf76aa2476/Documentation/arm64/booting.rst",
+      "locator": "Before jumping into the kernel; CPU-mode; caches, MMUs; primary CPU general-purpose register settings",
+      "accessed": "2026-09-24",
+      "note": "Linux's boot ABI is not treated as the custom EL2 payload ABI."
+    },
+    {
+      "id": "ARM-PSCI",
+      "kind": "specification",
+      "title": "Power State Coordination Interface",
+      "revision": "DEN0022 PSCI specification, current landing page",
+      "url": "https://developer.arm.com/documentation/den0022/latest/",
+      "locator": "CPU_ON; AFFINITY_INFO; PSCI conduit",
+      "accessed": "2026-09-24",
+      "note": "The Arm landing URL does not expose revision text to the automated reader; no unavailable PDF was claimed as inspected. Linux DT evidence is used only to identify the advertised PSCI interface."
+    },
+    {
+      "id": "ARM-GIC",
+      "kind": "specification",
+      "title": "Arm Generic Interrupt Controller Architecture Specification",
+      "revision": "IHI 0069, current landing page",
+      "url": "https://developer.arm.com/documentation/ihi0069/latest/",
+      "locator": "GICv3 distributor, redistributor, system-register CPU interface, virtualization interface and interrupt groups",
+      "accessed": "2026-09-24"
+    },
+    {
+      "id": "ARM-SMMUV2",
+      "kind": "specification",
+      "title": "Arm System Memory Management Unit Architecture Specification",
+      "revision": "IHI 0062, current landing page",
+      "url": "https://developer.arm.com/documentation/ihi0062/latest/",
+      "locator": "SMMUv2 stream matching, stream-to-context, context banks and security controls",
+      "accessed": "2026-09-24"
+    },
+    {
+      "id": "LINUX-V6.1-T234",
+      "kind": "implementation_evidence",
+      "title": "Linux Tegra234 device tree",
+      "release": "v6.1",
+      "commit": "830b3c68c1fb1e9176028d02ef86f3cf76aa2476",
+      "url": "https://github.com/torvalds/linux/blob/830b3c68c1fb1e9176028d02ef86f3cf76aa2476/arch/arm64/boot/dts/nvidia/tegra234.dtsi",
+      "locator": "GIC at interrupt-controller@f400000; smmu_iso, smmu_niso0, smmu_niso1; CPU nodes; psci; tcu; armv8-timer; uarta",
+      "accessed": "2026-09-24",
+      "note": "Topology and driver-binding evidence only; not a firmware handoff guarantee."
+    },
+    {
+      "id": "MUEN-KERNEL",
+      "kind": "pinned_source",
+      "title": "Muen ARM64 kernel",
+      "commit": "bb48b4c5ec7d33aba58edc2fc89d4d2996ca568f",
+      "url": "https://git.codelabs.ch/muen/arm64/kernel.git",
+      "locator": "src/main/startup.S; src/main/arm/gic/gic-gic400.adb; src/main/arm/cpu/timer; src/main/arm/smmu; kernel.gpr",
+      "accessed": "2026-09-24"
+    },
+    {
+      "id": "MUEN-SYSTEMS",
+      "kind": "pinned_source",
+      "title": "Muen ARM64 systems",
+      "commit": "99f9e6264ef11af6ba7db66abedaa1b058683f33",
+      "url": "https://git.codelabs.ch/muen/arm64/systems.git",
+      "locator": "policy/hardware/xilinx-zcu104.xml; policy/platform; deployment/common/bootgen/bootgen.bif",
+      "accessed": "2026-09-24"
+    },
+    {
+      "id": "TASK-001",
+      "kind": "repository_evidence",
+      "title": "Task 001: upstream ARM64 baseline",
+      "revision": "repository-local historical report",
+      "url": "001-arm64-baseline.md",
+      "locator": "Target and dependency path; Initial compatibility conclusion"
+    },
+    {
+      "id": "TASK-002",
+      "kind": "repository_evidence",
+      "title": "Task 002: upstream ARM64 QEMU runtime baseline",
+      "revision": "563fed78e19531f445bed11ebd34287d6456ca49",
+      "url": "002-arm64-runtime-baseline.md",
+      "locator": "Pinned runtime procedure and results"
+    }
+  ]
+}

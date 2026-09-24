@@ -13,8 +13,8 @@ not been selected.
   hardware-description source states the behavior.
 * **Build-time validation** means the ZynqMP image assembled successfully; it
   does not establish subsystem behavior.
-* **Runtime result** is blocked before QEMU startup, so no subsystem runtime
-  validation occurred.
+* **Runtime result:** Task 002 subsequently completed the pinned QEMU plan twice;
+  those observations concern only the ZynqMP/QEMU target, not Orin.
 * **Unknown** identifies information that must not be inferred from ARM64 alone.
 
 Primary Muen sources are the ARM64 kernel
@@ -33,9 +33,16 @@ designation. NVIDIA's Orin Nano development example uses a P3767 SOM on a P3768
 reference carrier (P3766 kit), but this task does not assume that exact carrier
 revision for the intended hardware.
 
+Task 003 now supplies a claim-level source index and ownership contract:
+[`003-source-index.json`](003-source-index.json) and
+[`003-tegra234-platform-contract.md`](003-tegra234-platform-contract.md). Its
+coherent vendor reference is r36.4.4 with `edk2-nvidia` `uefi-202405.3` at
+`350c50a65a7b30d916b8c1901ed940f6d69bbcaa`; this is not a claim about the
+installed firmware.
+
 ## Compatibility matrix
 
-### Boot entry contract and exception level — incompatible/unknown
+### Boot entry contract and exception level — candidate route, target-gated
 
 * **Inspected implementation:** `src/main/startup.S:25-71` accepts EL3 or EL2.
   EL3 enters the bundled ZynqMP-oriented BL31 code. Direct EL2 requires core 0
@@ -50,13 +57,22 @@ revision for the intended hardware.
   requires T234 MB1 BCT and device-tree adaptation. Linux describes Tegra234 CPU
   nodes with literal compatible `"arm,cortex-a78"` and PSCI enablement; the
   intended Orin Nano 8GB module is a six-core Cortex-A78AE product.
-* **Build/runtime evidence:** the ZynqMP image built. QEMU did not start because
-  of the host `guestfs` prerequisite; no boot contract was exercised. No Orin
-  runtime test occurred.
+* **Build/runtime evidence:** Task 001 built the ZynqMP image but stopped before
+  QEMU because of the then-unresolved host prerequisite. Task 002 subsequently
+  booted the unchanged pinned image twice. No Orin boot contract was exercised.
 * **Unknown:** the supported NVIDIA firmware handoff to a custom non-secure EL2
   payload, required secure-firmware changes, CPU release state, reserved-memory
   contract, and ownership/security state of GIC/SMMUs. These require NVIDIA's
   T234 TRM and firmware/secure-boot documentation before implementation.
+
+Task 003 source inspection narrows this gap. The selected NVIDIA PrePi source
+transitions from EL3 to non-secure EL2 before UEFI, and NVIDIA UEFI uses standard
+`LoadImage`/`StartImage`. The best-supported route is therefore an authorized
+AArch64 EFI loader that captures the final map/DT, calls `ExitBootServices`, and
+hands off to a guarded single-core EL2 diagnostic. Installed firmware, image
+authentication and actual entry EL remain prerequisites; an EFI application's
+entry state is not itself a post-firmware Muen handoff. See the contract and
+[`003-el2-diagnostic-plan.md`](003-el2-diagnostic-plan.md).
 
 ### Interrupt controller — implementation gap
 
@@ -72,8 +88,8 @@ revision for the intended hardware.
   different programming and virtualization model with redistributors/system
   registers rather than the required GICC/GICH/GICV layout.
 * **Build/runtime evidence:** policy generation and image build accepted the
-  configured ZynqMP GICv2 model. QEMU did not start, so neither GICv2 behavior
-  nor the CI serial expectations ran; no GICv3 or Orin test occurred.
+  configured ZynqMP GICv2 model. Task 002 subsequently exercised that QEMU model
+  and its serial assertions; no GICv3 or Orin test occurred.
 * **Unknown:** exact GICv3 revision/features, ITS requirements, interrupt routing,
   and firmware ownership on the target module. A new GICv3 implementation and
   proof strategy are required; Linux guest `CONFIG_ARM_GIC_V3` does not provide
@@ -90,8 +106,9 @@ revision for the intended hardware.
 * **Documented behavior:** Linux v6.1 describes Tegra234 with an
   `arm,armv8-timer` node and the standard secure/non-secure/virtual/hypervisor
   PPIs. This shows architectural timer presence, not Muen timing correctness.
-* **Build/runtime evidence:** image build only; QEMU did not start, so there was
-  no timer runtime validation or Orin measurement.
+* **Build/runtime evidence:** Task 002 subsequently observed the pinned QEMU
+  virtual timer/clock path and scheduler assertions. It did not test T234 timer
+  routing or firmware ownership.
 * **Unknown:** CNTFRQ consistency, timer access/trap state at handoff, PPI routing,
   counter synchronization, and worst-case scheduling behavior on Cortex-A78.
   Policy frequency and scheduling assumptions must be measured and validated.
@@ -142,9 +159,9 @@ revision for the intended hardware.
 * **Documented behavior:** current ZynqMP policy is four Cortex-A53 cores. Linux
   v6.1 Tegra234 CPU nodes use literal compatible `"arm,cortex-a78"` and PSCI;
   NVIDIA's intended Orin Nano 8GB module designation is six-core Cortex-A78AE.
-* **Build/runtime evidence:** the selected *minimal* baseline is one-core and
-  built only; QEMU did not start. It does not test the separate multicore recipe,
-  and no Orin test occurred.
+* **Build/runtime evidence:** Task 002 subsequently ran the selected one-core
+  *minimal* QEMU baseline. It does not test the separate multicore recipe, and
+  no Orin test occurred.
 * **Unknown:** CPU count/SKU policy, PSCI versus spin-table/custom release path,
   affinity mapping, coherency enablement, power management, and reset/offline
   behavior under NVIDIA firmware.
@@ -233,7 +250,11 @@ revision for the intended hardware.
 ARM64 ISA commonality is insufficient. The generic timer and broad stage-2
 architecture offer potential reuse, but boot/firmware handoff, Cortex-A78AE CPU
 setup, GICv3, multicore PSCI flow, SMMU topology and stream IDs, console, policy,
-and Linux device/firmware integration are concrete gaps. The next task should be
-a read-only T234 platform-contract study that obtains authoritative register and
-firmware ownership information and defines a minimal EL2 handoff—before any
-kernel implementation or hardware flashing.
+and Linux device/firmware integration are concrete gaps. Task 003 completed the
+read-only platform-contract study. It establishes a target-gated EFI-to-EL2
+diagnostic candidate, GICv3 firmware initialization evidence, a three-controller
+SMMUv2 topology in Linux hardware descriptions, firmware-programmed timer
+frequency, and TCU-versus-16550 console distinctions. It does not establish the
+unknown target's installed state. The next task is the bounded diagnostic
+milestone, only after board, firmware, security, recovery and console inventory;
+it is not yet a Muen port or isolation test.
