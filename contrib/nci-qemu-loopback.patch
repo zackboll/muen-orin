@@ -1,0 +1,13 @@
+diff --git a/steps/vm_qemu_xilinx.py b/steps/vm_qemu_xilinx.py
+index e0f3201..6e86601 100644
+--- a/steps/vm_qemu_xilinx.py
++++ b/steps/vm_qemu_xilinx.py
+@@ -103,7 +103,7 @@ class VmQemuXilinx(VM):
+             f"{boot_drive or ''}"
+             " -hw-dtb ${DTB_PATH}/SINGLE_ARCH/zcu102-arm.dtb"
+             f" -m {memory}"
+-            f" -net nic -net nic -net nic -net nic,netdev=eth0 -netdev user,id=eth0,hostfwd=tcp::{ssh_port}-:22"
++            f" -net nic -net nic -net nic -net nic,netdev=eth0 -netdev user,id=eth0,hostfwd=tcp:127.0.0.1:{ssh_port}-:22"
+             f"{cpu_boot}"
+             f"{boot_mode or ''}"
+         )

@@ -161,6 +161,14 @@ These outcomes are intentionally separate:
 * **Proof:** **not run**. Proof is a separate `*-proof` recipe; a debug build or
   Markdown lint result must not be reported as proof evidence.
 
+Task 002 subsequently resolved the launcher environment and completed the
+unchanged QEMU boot and pinned runtime plan twice. See
+[`002-arm64-runtime-baseline.md`](002-arm64-runtime-baseline.md). This follow-up
+does not alter the historical Task 001 observations above. With the upstream
+runtime baseline established, the recommended next task is the read-only
+Tegra234 platform-contract study described in the gap analysis, before any Orin
+implementation.
+
 ## Source inventory and reproducibility limits
 
 The top-level SHA alone is insufficient. To reselect the observed source set:
