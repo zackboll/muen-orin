@@ -1,0 +1,2511 @@
+{
+  "schema_version": 2,
+  "captured_utc_date": "2026-09-24",
+  "target": "arm64-qemu-zcu102-minimal-debug",
+  "configured_source_selection": {
+    "top_level": {
+      "repository": "git@github.com:zackboll/muen-orin.git",
+      "upstream": "https://github.com/codelabs-ch/bob-muen.git",
+      "commit": "084e3143c52956e0323af1911399abdcaff3bfb9"
+    },
+    "submodules": [
+      {
+        "path": "ci/nci",
+        "url": "https://git.codelabs.ch/nci.git",
+        "commit": "9ad51d75662d8ad731bae959ba0ed71b821b10d8"
+      },
+      {
+        "path": "ci/nci-config",
+        "url": "https://git.codelabs.ch/nci-config.git",
+        "commit": "8ac722ba0551e4958a4d70fe34ab91a1372412e3"
+      }
+    ],
+    "layers": [
+      {
+        "name": "basement",
+        "url": "https://github.com/codelabs-ch/basement.git",
+        "branch": "master-b79927c309a0+codelabs",
+        "commit": "df866d182cf7b3856a099f22a94b3fd38cad87a1"
+      },
+      {
+        "name": "basement-gnu-linux",
+        "url": "https://github.com/codelabs-ch/basement-gnu-linux.git",
+        "branch": "master-c1d98bf23f1f+codelabs",
+        "commit": "5e64cdf792c335efd2be74ca00c1c203127d2c7c"
+      },
+      {
+        "name": "ada",
+        "url": "https://git.codelabs.ch/bob/ada.git",
+        "branch": "main",
+        "commit": "95cb7a0a768dfd87314cbf469b18bd35f606dcb3"
+      },
+      {
+        "name": "codelabs",
+        "url": "https://git.codelabs.ch/bob/codelabs.git",
+        "branch": "main",
+        "commit": "5909d22dcd7f17534e4e56749979d6f742fef977"
+      }
+    ]
+  },
+  "extraction": {
+    "bob_version": "1.2.0",
+    "working_directory": "/home/zboll/git/muen-orin",
+    "environment": "PATH=/tmp/muen-task001-venv/bin:$PATH; no user.yaml, override_layers.yaml, or -D overrides",
+    "sandbox_evidence": "Original command had no sandbox option; `bob show --format json -f sandbox arm64-qemu-zcu102-minimal-debug` returned {} for the same configuration.",
+    "query_command": "bob query-scm -r --default '<unset>' -f 'git=git|{package}|{dir}|{url}|{branch}|{commit}|{tag}' -f 'url=url|{package}|{dir}|{url}|{fileName}|{digestSHA1}|{digestSHA256}|{digestSHA512}' arm64-qemu-zcu102-minimal-debug > scm-all-digests.txt",
+    "transformation_command": "python3 contrib/source_manifest.py scm-all-digests.txt docs/porting/001-source-manifest.json docs/porting/001-source-manifest.json",
+    "ordering_and_identity": "Each query line becomes one scm_records entry in original order with a one-based record_number. No URL, package, or directory deduplication is performed."
+  },
+  "observed_build_provenance": {
+    "build_completed_utc": "2026-09-24T01:14:56.901092+00:00",
+    "bob_version": "1.2.0",
+    "final_audit_sha256": "e050fb2a9665ee405fcb496db171923df1d5df8a505e9e3bc14ec461c02be055",
+    "final_audit": {
+      "variant_id": "991ca6c68e010719524fda8114296f7a7aa9cc7f",
+      "build_id": "20957d11c9f1310d8459f6c6120a0494d78e063b35b56adc9b2041e021e2e5ad007b027bf676bdfc",
+      "result_hash": "4f8b39d21d43cd61c27aaceb8598cd817a142f2b",
+      "reference_count": 1033
+    },
+    "direct_checkout_observations": [
+      {
+        "url": "https://git.codelabs.ch/muen/tools.git",
+        "commit": "edea93181f14dfc5a9da4544194c4d11a2185217",
+        "dirty": false,
+        "audit": "dev/src/muen/tools/1/audit.json.gz"
+      },
+      {
+        "url": "https://git.codelabs.ch/muen/components.git",
+        "commit": "60e688ceb4e404a64c7e9eccb3007294095f03f0",
+        "dirty": false,
+        "audit": "dev/src/muen/components/1/audit.json.gz"
+      },
+      {
+        "url": "https://git.codelabs.ch/muen/arm64/kernel.git",
+        "commit": "bb48b4c5ec7d33aba58edc2fc89d4d2996ca568f",
+        "dirty": false,
+        "audit": "dev/src/muen/arm64-kernel/1/audit.json.gz"
+      },
+      {
+        "url": "https://git.codelabs.ch/muen/component/libs.git",
+        "commit": "bd101fdfcbdcb1c201b3b8462961e1004e34dbbf",
+        "dirty": false,
+        "audit": "dev/src/muen/component-libs/1/audit.json.gz"
+      },
+      {
+        "url": "https://git.codelabs.ch/muen/arm64/systems.git",
+        "commit": "99f9e6264ef11af6ba7db66abedaa1b058683f33",
+        "dirty": false,
+        "audit": "dev/src/muen/arm64-systems/1/audit.json.gz"
+      }
+    ],
+    "tag_only_git_observation": {
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/jejb/sbsigntools.git",
+      "tag": "v0.9.5",
+      "observed_commit": null,
+      "reason": "No direct source checkout or source audit for this SCM remains. It was reachable only through retained dependency/reference audits from an archive-restored package; no remote tag resolution was substituted."
+    },
+    "download_audit_evidence": "The final Bob audit and retained package audits provide artifact IDs, build IDs, result hashes, recipes/layers, and dependency/reference chains. Archive-restored package audits can originate from other hosts/Bob versions and are provenance evidence, not direct observations of local source bytes unless an SCM record is present.",
+    "local_logs": "/home/zboll/muen-task001-evidence (untracked; copied from /tmp before correction)"
+  },
+  "limitations": [
+    "Configured selections and digests describe recipe intent; they do not by themselves prove that every fetched byte was independently rehashed during this correction.",
+    "SHA-1-only records are configured integrity selections but use a collision-weaker digest than SHA-256 or SHA-512.",
+    "The tag-only Git record has no build-observed commit available from retained direct checkout evidence.",
+    "Many dependencies were restored from binary archives. Their audit chains preserve provenance metadata but are not equivalent to local source checkouts.",
+    "No bit-for-bit rebuild comparison was performed, and this manifest does not claim a fully verified source closure."
+  ],
+  "reselection": [
+    "Install exactly BobBuildTool==1.2.0 in an isolated environment.",
+    "Checkout configured_source_selection.top_level.commit and initialize the two pinned submodules.",
+    "Run bob layers update and verify all four layer commits.",
+    "Ensure no user.yaml, override_layers.yaml, or -D overrides are active; preserve the recorded no-sandbox effective configuration.",
+    "Run extraction.query_command and extraction.transformation_command, then compare every ordered SCM record and derived count."
+  ],
+  "counts": {
+    "total": 177,
+    "git": 27,
+    "git_with_configured_commit": 26,
+    "git_without_configured_commit": 1,
+    "url": 150,
+    "url_with_configured_sha1": 52,
+    "url_with_configured_sha256": 97,
+    "url_with_configured_sha512": 1,
+    "url_sha256_or_sha512": 98,
+    "url_sha1_only": 52,
+    "url_no_supported_digest": 0,
+    "url_unknown_digest_evidence": 0,
+    "url_with_multiple_configured_digests": 0
+  },
+  "scm_records": [
+    {
+      "record_number": 1,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::make",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//make/make-4.3.tar.gz",
+      "filename": "make-4.3.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "e05fdde47c5f7ca45cb697e973894ff4f5d79e13b750ed57d7b66d8defc78e19",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 2,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/perl::perl",
+      "directory": "perl",
+      "url": "http://www.cpan.org/src/5.0/perl-5.40.2.tar.xz",
+      "filename": "perl-5.40.2.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "0551c717458e703ef7972307ab19385edfa231198d88998df74e12226abf563b",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 3,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/perl::perl",
+      "directory": "perl-cross",
+      "url": "https://github.com/arsv/perl-cross/raw/releases/perl-cross-1.6.2.tar.gz",
+      "filename": "perl-cross.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "131f7496152ee32067dbac2bc9b44b2f582fc778140e545701b3b2faee782f1d",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 4,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::m4",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//m4/m4-1.4.20.tar.xz",
+      "filename": "m4-1.4.20.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "e236ea3a1ccf5f6c270b1c4bb60726f371fa49459a8eaaebc90b216b328daf2b",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 5,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::help2man",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//help2man/help2man-1.49.3.tar.xz",
+      "filename": "help2man-1.49.3.tar.xz",
+      "digests": {
+        "sha1": "3ed88430c97af3c5b57949f6f030b913044af507",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 6,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::texinfo",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//texinfo/texinfo-6.1.tar.xz",
+      "filename": "texinfo-6.1.tar.xz",
+      "digests": {
+        "sha1": "d39c2e35ddb0aff6ebdd323ce53729bd215534fa",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 7,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::autotools/devel::autoconf",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//autoconf/autoconf-2.72.tar.xz",
+      "filename": "autoconf-2.72.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 8,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::autotools/devel::autoconf-archive",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//autoconf-archive/autoconf-archive-2023.02.20.tar.xz",
+      "filename": "autoconf-archive-2023.02.20.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "71d4048479ae28f1f5794619c3d72df9c01df49b1c628ef85fde37596dc31a33",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 9,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::autotools/devel::automake",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//automake/automake-1.16.5.tar.xz",
+      "filename": "automake-1.16.5.tar.xz",
+      "digests": {
+        "sha1": "32fb36e73568271ff506b60c55a6170b67681375",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 10,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::autotools/devel::libtool",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//libtool/libtool-2.4.6.tar.gz",
+      "filename": "libtool-2.4.6.tar.gz",
+      "digests": {
+        "sha1": "25b6931265230a06f0fc2146df64c04e5ae6ec33",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 11,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::autotools/devel::pkg-config-aclocal",
+      "directory": ".",
+      "url": "https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz",
+      "filename": "pkg-config-0.29.2.tar.gz",
+      "digests": {
+        "sha1": "76e501663b29cb7580245720edfb6106164fad2b",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 12,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::gettext",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//gettext/gettext-0.22.5.tar.xz",
+      "filename": "gettext-0.22.5.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "fe10c37353213d78a5b83d48af231e005c4da84db5ce88037d88355938259640",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 13,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::pkg-config-tool",
+      "directory": ".",
+      "url": "https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz",
+      "filename": "pkg-config-0.29.2.tar.gz",
+      "digests": {
+        "sha1": "76e501663b29cb7580245720edfb6106164fad2b",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 14,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::bison",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//bison/bison-3.8.2.tar.xz",
+      "filename": "bison-3.8.2.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "9bba0214ccf7f1079c5d59210045227bcf619519840ebfa80cd3849cff5a5bf2",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 15,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::flex",
+      "directory": ".",
+      "url": "https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz",
+      "filename": "flex-2.6.4.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 16,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/python::python3-minimal",
+      "directory": ".",
+      "url": "https://www.python.org/ftp/python/3.13.2/Python-3.13.2.tar.xz",
+      "filename": "Python-3.13.2.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "d984bcc57cd67caab26f7def42e523b1c015bbc5dc07836cf4f0b63fa159eb56",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 17,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/python::python3-minimal/libs::expat-dev",
+      "directory": ".",
+      "url": "https://github.com/libexpat/libexpat/releases/download/R_2_4_1/expat-2.4.1.tar.gz",
+      "filename": "expat-2.4.1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "a00ae8a6b96b63a3910ddc1100b1a7ef50dc26dceb65ced18ded31ab392f132b",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 18,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/python::python3-minimal/libs::libffi-dev",
+      "directory": ".",
+      "url": "https://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz",
+      "filename": "libffi-3.2.1.tar.gz",
+      "digests": {
+        "sha1": "280c265b789e041c02e5c97815793dfc283fb1e6",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 19,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/python::python3-minimal/libs::zlib-dev",
+      "directory": ".",
+      "url": "https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz",
+      "filename": "v1.3.1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 20,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//gcc/gcc-13.4.0/gcc-13.4.0.tar.xz",
+      "filename": "gcc-13.4.0.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": null,
+        "sha512": "9b4b83ecf51ef355b868608b8d257b2fa435c06d2719cb86657a7c2c2a0828ff4ce04e9bac1055bbcad8ed5b4da524cafaef654785e23a50233d95d89201e35f"
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 21,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::gmp-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//gmp/gmp-6.3.0.tar.xz",
+      "filename": "gmp-6.3.0.tar.xz",
+      "digests": {
+        "sha1": "b4043dd2964ab1a858109da85c44de224384f352",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 22,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::mpfr-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//mpfr/mpfr-4.2.1.tar.xz",
+      "filename": "mpfr-4.2.1.tar.xz",
+      "digests": {
+        "sha1": "31ffb4244cb469e2b4937cce1f50150300971dfb",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 23,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::mpc-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//mpc/mpc-1.3.1.tar.gz",
+      "filename": "mpc-1.3.1.tar.gz",
+      "digests": {
+        "sha1": "bac1c1fa79f5602df1e29e4684e103ad55714e02",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 24,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::isl-dev",
+      "directory": ".",
+      "url": "https://downloads.sourceforge.net/libisl/isl-0.26.tar.xz",
+      "filename": "isl-0.26.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "a0b5cb06d24f9fa9e77b55fabbe9a3c94a336190345c2555f9915bb38e976504",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 25,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/devel::autotools-2.69/devel::autoconf-2.69",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//autoconf/autoconf-2.69.tar.xz",
+      "filename": "autoconf-2.69.tar.xz",
+      "digests": {
+        "sha1": "e891c3193029775e83e0534ac0ee0c4c711f6d23",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 26,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/devel::binutils",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//binutils/binutils-2.45.tar.xz",
+      "filename": "binutils-2.45.tar.xz",
+      "digests": {
+        "sha1": "09fd8a50a95be4a94412fe3847d16280996679c5",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 27,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::glibc",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//glibc/glibc-2.39.tar.xz",
+      "filename": "glibc-2.39.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "f77bd47cf8170c57365ae7bf86696c118adb3b120d3259c64c502d3dc1e2d926",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 28,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::glibc/kernel::linux-libc-headers",
+      "directory": ".",
+      "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.31.tar.xz",
+      "filename": "linux-6.6.31.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "d6ecff966f8c95ec4cb3bb303904f757b7de6a6bcfef0d0771cb852158e61c20",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 29,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/core::coreutils",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//coreutils/coreutils-9.5.tar.xz",
+      "filename": "coreutils-9.5.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "cd328edeac92f6a665de9f323c93b712af1858bc2e0d88f3f7100469470a1b8a",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 30,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/core::util-linux",
+      "directory": ".",
+      "url": "https://cdn.kernel.org/pub/linux/utils/util-linux/v2.40/util-linux-2.40.2.tar.xz",
+      "filename": "util-linux-2.40.2.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "d78b37a66f5922d70edf3bdfb01a6b33d34ed3c3cafd6628203b2a2b67c8e8b3",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 31,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/core::util-linux/libs::ncurses-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//ncurses/ncurses-6.5.tar.gz",
+      "filename": "ncurses-6.5.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 32,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::diffutils",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//diffutils/diffutils-3.10.tar.xz",
+      "filename": "diffutils-3.10.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "90e5e93cc724e4ebe12ede80df1634063c7a855692685919bfe60b556c9bd09e",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 33,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::patch",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//patch/patch-2.7.6.tar.xz",
+      "filename": "patch-2.7.6.tar.xz",
+      "digests": {
+        "sha1": "6f64fa75993bdb285ac4ed6eca6c9212725bff91",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 34,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/editors::ed",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//ed/ed-1.20.2.tar.lz",
+      "filename": "ed-1.20.2.tar.lz",
+      "digests": {
+        "sha1": null,
+        "sha256": "65fec7318f48c2ca17f334ac0f4703defe62037bb13cc23920de077b5fa24523",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 35,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/net::make-ca",
+      "directory": "make-ca",
+      "url": "https://github.com/djlucas/make-ca/archive/v0.6.tar.gz",
+      "filename": "v0.6.tar.gz",
+      "digests": {
+        "sha1": "5f909366eca66c6c2caa8e44ca531d198b18a69d",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 36,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/net::make-ca",
+      "directory": "nss",
+      "url": "https://hg.mozilla.org/mozilla-central/raw-file/100e006a2730/security/nss/lib/ckfw/builtins/certdata.txt",
+      "filename": "certdata.txt",
+      "digests": {
+        "sha1": "b7be1905a9ca11c0c42d0270ce54132f354244b3",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 37,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::bash",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//bash/bash-5.3.tar.gz",
+      "filename": "bash-5.3.tar.gz",
+      "digests": {
+        "sha1": "f55ec1fd62ae33f1b8bf4eb6527e0fa53363e481",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 38,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::bash/libs::readline-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//readline/readline-8.3.tar.gz",
+      "filename": "readline-8.3.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 39,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::bzip2",
+      "directory": ".",
+      "url": "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz",
+      "filename": "bzip2-1.0.8.tar.gz",
+      "digests": {
+        "sha1": "bf7badf7e248e0ecf465d33c2f5aeec774209227",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 40,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::file",
+      "directory": ".",
+      "url": "https://www.astron.com/pub/file/file-5.43.tar.gz",
+      "filename": "file-5.43.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "8c8015e91ae0e8d0321d94c78239892ef9dbc70c4ade0008c0e95894abfb1991",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 41,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::findutils",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//findutils/findutils-4.10.0.tar.xz",
+      "filename": "findutils-4.10.0.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "1387e0b67ff247d2abde998f90dfbf70c1491391a59ddfecb8ae698789f0a4f5",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 42,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::gawk",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//gawk/gawk-5.3.0.tar.xz",
+      "filename": "gawk-5.3.0.tar.xz",
+      "digests": {
+        "sha1": "98c37c82d0d7370354e4e789406d6060c75c402a",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 43,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::grep",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//grep/grep-3.11.tar.xz",
+      "filename": "grep-3.11.tar.xz",
+      "digests": {
+        "sha1": "955146a0a4887eca33606e391481bbef37055b86",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 44,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::grep/libs::pcre-lib-1-dev",
+      "directory": ".",
+      "url": "https://downloads.sourceforge.net/pcre/pcre-8.41.tar.bz2",
+      "filename": "pcre-8.41.tar.bz2",
+      "digests": {
+        "sha1": null,
+        "sha256": "e62c7eac5ae7c0e7286db61ff82912e1c0b7a0c13706616e94a7dd729321b530",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 45,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::gzip",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//gzip/gzip-1.13.tar.xz",
+      "filename": "gzip-1.13.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "7454eb6935db17c6655576c2e1b0fabefd38b4d0936e0f87f48cd062ce91a057",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 46,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::rsync",
+      "directory": ".",
+      "url": "https://www.samba.org/ftp/rsync/src/rsync-3.3.0.tar.gz",
+      "filename": "rsync-3.3.0.tar.gz",
+      "digests": {
+        "sha1": "e03db4fbaaebc5aa4934468cd31d22963b6ff888",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 47,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::sed",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//sed/sed-4.9.tar.xz",
+      "filename": "sed-4.9.tar.xz",
+      "digests": {
+        "sha1": "8ded1b543f1f558cbd5d7b713602f6a8ee84bde4",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 48,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::tar",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//tar/tar-1.35.tar.xz",
+      "filename": "tar-1.35.tar.xz",
+      "digests": {
+        "sha1": "6b9824c92deddbd7021801515270211f5252fbd8",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 49,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::unzip",
+      "directory": ".",
+      "url": "https://downloads.sourceforge.net/infozip/unzip60.tar.gz",
+      "filename": "unzip60.tar.gz",
+      "digests": {
+        "sha1": "abf7de8a4018a983590ed6f5cbd990d4740f8a22",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 50,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::xz-utils-tgt",
+      "directory": ".",
+      "url": "https://downloads.sourceforge.net/lzmautils/xz-5.4.6.tar.xz",
+      "filename": "xz-5.4.6.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "b92d4e3a438affcf13362a1305cd9d94ed47ddda22e456a42791e630a5644f5c",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 51,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::flex",
+      "directory": ".",
+      "url": "https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz",
+      "filename": "flex-2.6.4.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 52,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::fakeroot",
+      "directory": ".",
+      "url": "https://snapshot.debian.org/archive/debian/20240521T144222Z/pool/main/f/fakeroot/fakeroot_1.34.orig.tar.gz",
+      "filename": "fakeroot_1.34.orig.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "5727f16d8903792588efa7a9f8ef8ce71f8756e746b62e45162e7735662e56bb",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 53,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::fakeroot/libs::libcap-dev",
+      "directory": ".",
+      "url": "https://cdn.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.70.tar.xz",
+      "filename": "libcap-2.70.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "23a6ef8aadaf1e3e875f633bb2d116cfef8952dba7bc7c569b13458e1952b30f",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 54,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::git",
+      "directory": ".",
+      "url": "https://cdn.kernel.org/pub/software/scm/git/git-2.47.1.tar.xz",
+      "filename": "git-2.47.1.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "f3d8f9bb23ae392374e91cd9d395970dabc5b9c5ee72f39884613cd84a6ed310",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 55,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::git/libs::openssl-dev",
+      "directory": ".",
+      "url": "https://www.openssl.org/source/openssl-3.3.1.tar.gz",
+      "filename": "openssl-3.3.1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "777cd596284c883375a2a7a11bf5d2786fc5413255efab20c50d6ffe6d020b7e",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 56,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::git/net::curl-dev",
+      "directory": ".",
+      "url": "https://curl.haxx.se/download/curl-8.7.1.tar.xz",
+      "filename": "curl-8.7.1.tar.xz",
+      "digests": {
+        "sha1": "a70963cba12224b44b8d754944b8ff618a6a3b57",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 57,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/libs::libxcrypt-tgt",
+      "directory": ".",
+      "url": "https://github.com/besser82/libxcrypt/releases/download/v4.4.36/libxcrypt-4.4.36.tar.xz",
+      "filename": "libxcrypt-4.4.36.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "e5e1f4caee0a01de2aee26e3138807d6d3ca2b8e67287966d1fefd65e1fd8943",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 58,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/utils::bc",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//bc/bc-1.08.1.tar.xz",
+      "filename": "bc-1.08.1.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "515430115b3334c636317503460a0950dff79940aa3259ce2c1aa67c2881d023",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 59,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::host-compat-toolchain/devel::flex",
+      "directory": ".",
+      "url": "https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz",
+      "filename": "flex-2.6.4.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 60,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::host-compat-toolchain/devel::compat::cross-toolchain/devel::compat::gcc-cross",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//gcc/gcc-9.5.0/gcc-9.5.0.tar.xz",
+      "filename": "gcc-9.5.0.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "27769f64ef1d4cd5e2be8682c0c93f9887983e6cfd1a927ce5a0a2915a95cf8f",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 61,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::host-compat-toolchain/devel::compat::cross-toolchain/devel::compat::gcc-cross/libs::compat::isl-dev",
+      "directory": ".",
+      "url": "https://downloads.sourceforge.net/libisl/isl-0.22.1.tar.xz",
+      "filename": "isl-0.22.1.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "28658ce0f0bdb95b51fd2eb15df24211c53284f6ca2ac5e897acc3169e55b60f",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 62,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::host-compat-toolchain/devel::compat::cross-toolchain/devel::compat::gcc-cross/devel::compat::binutils",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//binutils/binutils-2.34.tar.xz",
+      "filename": "binutils-2.34.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 63,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::host-compat-toolchain/devel::compat::cross-toolchain/devel::compat::gcc-cross/libs::compat::glibc",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//glibc/glibc-2.31.tar.xz",
+      "filename": "glibc-2.31.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "9246fe44f68feeec8c666bb87973d590ce0137cca145df014c72ec95be9ffd17",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 64,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::cmake-bootstrap",
+      "directory": ".",
+      "url": "https://github.com/Kitware/CMake/releases/download/v3.25.1/cmake-3.25.1.tar.gz",
+      "filename": "cmake-3.25.1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "1c511d09516af493694ed9baf13c55947a36389674d657a2d5e0ccedc6b291d8",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 65,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/libs::gdbm-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//gdbm/gdbm-1.23.tar.gz",
+      "filename": "gdbm-1.23.tar.gz",
+      "digests": {
+        "sha1": "50ba1b1d45ce33fd44e4fdaaf3b55a9d8f3dc418",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 66,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/python::python3-setuptools",
+      "directory": ".",
+      "url": "https://github.com/pypa/setuptools/archive/v75.3.2.tar.gz",
+      "filename": "v75.3.2.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "22463710a3393a745176726645fd7ec87dc60504f5ed38b6fcaac654384e81dd",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 67,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/python::python3-pip",
+      "directory": ".",
+      "url": "https://github.com/pypa/pip/archive/25.0.1.tar.gz",
+      "filename": "25.0.1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "334371888f0c679c04e819ddc234562feaea81331658a76842b62dc9dc83a832",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 68,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/python::python3-pip/python::build",
+      "directory": ".",
+      "url": "https://github.com/pypa/build/archive/refs/tags/1.2.2.tar.gz",
+      "filename": "1.2.2.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "6708ae4ee3ed0ca2f5efa4943627e5e6b0db4793ff3baba240e313a447007268",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 69,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/python::python3-pip/python::build/python::flit_core",
+      "directory": ".",
+      "url": "https://files.pythonhosted.org/packages/source/f/flit/flit-3.9.0.tar.gz",
+      "filename": "flit-3.9.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "d75edf5eb324da20d53570a6a6f87f51e606eee8384925cd66a90611140844c7",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 70,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/python::python3-pip/python::build/python::installer",
+      "directory": ".",
+      "url": "https://files.pythonhosted.org/packages/source/i/installer/installer-0.7.0.tar.gz",
+      "filename": "installer-0.7.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "a26d3e3116289bb08216e0d0f7d925fcef0b0194eedfa0c944bcaaa106c4b631",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 71,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/python::python3-pip/python::build/python::packaging",
+      "directory": ".",
+      "url": "https://github.com/pypa/packaging/archive/refs/tags/24.1.tar.gz",
+      "filename": "24.1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "7b31090ae4ddd6c48a5ed10073a880e6e2612ce8ac2f81e34f42aaabefd1b81b",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 72,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/python::python3-pip/python::build/python::pyproject-hooks",
+      "directory": ".",
+      "url": "https://files.pythonhosted.org/packages/source/p/pyproject_hooks/pyproject_hooks-1.1.0.tar.gz",
+      "filename": "pyproject_hooks-1.1.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "4b37730834edbd6bd37f26ece6b44802fb1c1ee2ece0e54ddff8bfc06db86965",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 73,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/python::python3-pip/python::build/python::wheel",
+      "directory": ".",
+      "url": "https://github.com/pypa/wheel/archive/0.44.0.tar.gz",
+      "filename": "0.44.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "a98adedb1f4b409c4aa211fbe4bbc1d687a2b7cf66cfe3079fc3140b2e4e0ce1",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 74,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::ninja",
+      "directory": ".",
+      "url": "https://github.com/Kitware/ninja/archive/v1.11.1.g95dee.kitware.jobserver-1.tar.gz",
+      "filename": "v1.11.1.g95dee.kitware.jobserver-1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "7ba84551f5b315b4270dc7c51adef5dff83a2154a3665a6c9744245c122dd0db",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 75,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::meson",
+      "directory": ".",
+      "url": "https://github.com/mesonbuild/meson/releases/download/1.5.1/meson-1.5.1.tar.gz",
+      "filename": "meson-1.5.1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "567e533adf255de73a2de35049b99923caf872a455af9ce03e01077e0d384bed",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 76,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::flex",
+      "directory": ".",
+      "url": "https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz",
+      "filename": "flex-2.6.4.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 77,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::cmake/libs::jsoncpp-dev",
+      "directory": ".",
+      "url": "https://github.com/open-source-parsers/jsoncpp/archive/1.9.3.tar.gz",
+      "filename": "1.9.3.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "8593c1d69e703563d94d8c12244e2e18893eeb9a8a9f8aa3d09a327aa45c8f7d",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 78,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::cmake/libs::libarchive-dev",
+      "directory": ".",
+      "url": "https://www.libarchive.de/downloads/libarchive-3.4.3.tar.xz",
+      "filename": "libarchive-3.4.3.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "0bfc3fd40491768a88af8d9b86bf04a9e95b6d41a94f9292dbc0ec342288c05f",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 79,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::cmake/libs::libuv-dev",
+      "directory": ".",
+      "url": "https://github.com/libuv/libuv/archive/v1.38.0.tar.gz",
+      "filename": "v1.38.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "2cd9a757fe6c512440933e2bdcab21143d4aa6249b2541399908ce038b756c9d",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 80,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::cmake/libs::rhash-dev",
+      "directory": ".",
+      "url": "https://downloads.sourceforge.net/rhash/rhash-1.3.5-src.tar.gz",
+      "filename": "rhash-1.3.5-src.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "98e0688acae29e68c298ffbcdbb0f838864105f9b2bd8857980664435b1f1f2e",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 81,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm",
+      "directory": ".",
+      "url": "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-20.1.2.tar.gz",
+      "filename": "llvmorg-20.1.2.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "9ee597456405ddf4809bcf66a4765137a68a85361347ca2a4bb13d9176e932ab",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 82,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/libs::zstd-dev",
+      "directory": ".",
+      "url": "https://github.com/facebook/zstd/releases/download/v1.5.6/zstd-1.5.6.tar.gz",
+      "filename": "zstd-1.5.6.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "8c29e06cf42aacc1eafc4077ae2ec6c6fcb96a626157e0593d5e82a34fd403c1",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 83,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/devel::ocaml",
+      "directory": ".",
+      "url": "https://github.com/ocaml/ocaml/archive/refs/tags/5.3.0.tar.gz",
+      "filename": "5.3.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "eb9eab2f21758d3cfb1e78c7f83f0b4dd6302824316aba4abee047a5a4f85029",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 84,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/devel::opam",
+      "directory": ".",
+      "url": "https://github.com/ocaml/opam/archive/refs/tags/2.3.0.tar.gz",
+      "filename": "2.3.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "7787c50c6caf1568b8a1e1fa79fd2c8107f633316f29ba94797cba831c75c4b4",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 85,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/devel::ocamlfind",
+      "directory": ".",
+      "url": "https://github.com/ocaml/ocamlfind/archive/refs/tags/findlib-1.9.8.tar.gz",
+      "filename": "findlib-1.9.8.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "d6899935ccabf67f067a9af3f3f88d94e310075d13c648fa03ff498769ce039d",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 86,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/libs::ocaml-ctypes-dev",
+      "directory": ".",
+      "url": "https://github.com/yallop/ocaml-ctypes/archive/refs/tags/0.23.0.tar.gz",
+      "filename": "0.23.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "cae47d815b27dd4c824a007f1145856044542fe2588d23a443ef4eefec360bf1",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 87,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/libs::ocaml-ctypes-dev/devel::dune",
+      "directory": ".",
+      "url": "https://github.com/ocaml/dune/archive/refs/tags/3.17.2.tar.gz",
+      "filename": "3.17.2.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "1b45e34d1eacf40be569e4d7ad055508a3242637b098327c91f7ce67772a1889",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 88,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/libs::ocaml-ctypes-dev/devel::dune-configurator-dev/libs::csexp-dev",
+      "directory": ".",
+      "url": "https://github.com/ocaml-dune/csexp/archive/refs/tags/1.5.2.tar.gz",
+      "filename": "1.5.2.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "de3fda861ec8210a404fcb76afa162b08ed1cd11228645c78b53e1f82b24e236",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 89,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/libs::ocaml-ctypes-dev/libs::bigarray-compat-dev",
+      "directory": ".",
+      "url": "https://github.com/mirage/bigarray-compat/archive/refs/tags/v1.1.0.tar.gz",
+      "filename": "v1.1.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "cf09354986d1ab7d506949f58e73dd72be8aedb241c1593381c18e92a70c0bb1",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 90,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/libs::ocaml-ctypes-dev/libs::ocaml-integers-dev",
+      "directory": ".",
+      "url": "https://github.com/yallop/ocaml-integers/archive/refs/tags/0.7.0.tar.gz",
+      "filename": "0.7.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "8bb517fa9a1818246eb8c4ce34ee1489fbebb4b92defa3a25d13cab8d23ec685",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 91,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::llvm/libs::ocaml-ctypes-dev/libs::ocaml-integers-dev/libs::stdlib-shims-dev",
+      "directory": ".",
+      "url": "https://github.com/ocaml/stdlib-shims/archive/refs/tags/0.3.0.tar.gz",
+      "filename": "0.3.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "6d0386313a021146300011549180fcd4e94f7ac3c3bf021ff165f6558608f0c2",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 92,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/libs::libxml2-bin",
+      "directory": ".",
+      "url": "https://download.gnome.org/sources/libxml2/2.13/libxml2-2.13.3.tar.xz",
+      "filename": "libxml2-2.13.3.tar.xz",
+      "digests": {
+        "sha1": "170889cc11c53a96b18e6957f07ec6f823cad2c6",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 93,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/libs::libxml2-bin/libs::libiconv-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//libiconv/libiconv-1.18.tar.gz",
+      "filename": "libiconv-1.18.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "3b08f5f4f9b4eb82f151a7040bfd6fe6c6fb922efe4b1659c66ea933276965e8",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 94,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/libs::libxslt-bin",
+      "directory": ".",
+      "url": "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.42.tar.xz",
+      "filename": "libxslt-1.1.42.tar.xz",
+      "digests": {
+        "sha1": "a2ee92076aa1f9d0b97218ba3a1222e23112e34a",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 95,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::tidy",
+      "directory": ".",
+      "url": "https://github.com/htacg/tidy-html5/archive/refs/tags/5.8.0.tar.gz",
+      "filename": "5.8.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "59c86d5b2e452f63c5cdb29c866a12a4c55b1741d7025cf2f3ce0cde99b0660e",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 96,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::acpica",
+      "directory": ".",
+      "url": "https://github.com/acpica/acpica/archive/refs/tags/R09_27_24.tar.gz",
+      "filename": "R09_27_24.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "cc167c0825c3807f9812f892e77ec918b7f62c3faeaf9a2e3664de7639b00b6b",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 97,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::iucode-tool",
+      "directory": ".",
+      "url": "https://gitlab.com/iucode-tool/releases/-/raw/master/iucode-tool_2.3.1.tar.xz",
+      "filename": "iucode-tool_2.3.1.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "12b88efa4d0d95af08db05a50b3dcb217c0eb2bfc67b483779e33d498ddb2f95",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 98,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::ada-language-server",
+      "directory": ".",
+      "url": "https://github.com/AdaCore/ada_language_server/releases/download/26.0.202507021/als-26.0.202507021-linux-x64.tar.gz",
+      "filename": "als-26.0.202507021-linux-x64.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "b9453d186be35fa937870f247a72f5b5a15eb886ca655131fff8a98191b626ec",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 99,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::gnat-x86_64-pc-linux-gnu",
+      "directory": ".",
+      "url": "https://github.com/alire-project/GNAT-FSF-builds/releases/download/gnat-13.2.0-2/gnat-x86_64-linux-13.2.0-2.tar.gz",
+      "filename": "gnat-x86_64-linux-13.2.0-2.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "a27fd7945ac9ead50abdd8e4564d133d00f635536bf9dfdf1e00af5e08a0c494",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 100,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::gprbuild-bootstrap",
+      "directory": "gprbuild",
+      "url": "https://github.com/AdaCore/gprbuild/archive/refs/tags/v23.0.0.tar.gz",
+      "filename": "v23.0.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "141b403ea8a3f82b58b6a8690f8409fe295f3692b667ba3ec487fafcbd26e389",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 101,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::gprbuild-bootstrap",
+      "directory": "xmlada",
+      "url": "https://github.com/AdaCore/xmlada/archive/refs/tags/v23.0.0.tar.gz",
+      "filename": "v23.0.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "66245a68f2e391c8dc8dc50d6d5f109eb3b371e261d095d2002dff3927dd5253",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 102,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::gprbuild-bootstrap",
+      "directory": "gprconfig_kb",
+      "url": "https://github.com/AdaCore/gprconfig_kb/archive/refs/tags/v23.0.0.tar.gz",
+      "filename": "v23.0.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "182d9108c91390ddd67c841e45a3fc9dd23a94b33d4a1f05ed2788c1fb9b7dd2",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 103,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::gprbuild-tool",
+      "directory": ".",
+      "url": "https://github.com/AdaCore/gprbuild/archive/refs/tags/v23.0.0.tar.gz",
+      "filename": "v23.0.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "141b403ea8a3f82b58b6a8690f8409fe295f3692b667ba3ec487fafcbd26e389",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 104,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::gprbuild-tool/adacore::xmlada-dev",
+      "directory": ".",
+      "url": "https://github.com/AdaCore/xmlada/archive/refs/tags/v23.0.0.tar.gz",
+      "filename": "v23.0.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "66245a68f2e391c8dc8dc50d6d5f109eb3b371e261d095d2002dff3927dd5253",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 105,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::gnatprove",
+      "directory": ".",
+      "url": "https://github.com/alire-project/GNAT-FSF-builds/releases/download/gnatprove-12.1.0-1/gnatprove-x86_64-linux-12.1.0-1.tar.gz",
+      "filename": "gnatprove-x86_64-linux-12.1.0-1.tar.gz",
+      "digests": {
+        "sha1": "3e74f408418cde455f2faeccff07dd709c7608b3",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 106,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/tools.git",
+      "branch": "main",
+      "commit": "edea93181f14dfc5a9da4544194c4d11a2185217",
+      "tag": null
+    },
+    {
+      "record_number": 107,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::common-gpr",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/common.git",
+      "branch": "main",
+      "commit": "2112e9dd3f5a9346526d3cbf224628112a4d5f72",
+      "tag": null
+    },
+    {
+      "record_number": 108,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::build-cfg-gpr",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/build-cfg.git",
+      "branch": "main",
+      "commit": "a9a9196b026b4dbbe02b026dc2c280ae95718475",
+      "tag": null
+    },
+    {
+      "record_number": 109,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/ada::ada-bfd-dev",
+      "directory": ".",
+      "url": "https://github.com/codelabs-ch/ada-bfd.git",
+      "branch": "master",
+      "commit": "ec5646af62936eb63769eb7dc76545fcecfd4c72",
+      "tag": null
+    },
+    {
+      "record_number": 110,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/muen::tools-libmulog-dev/codelabs::libs::alog-dev",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/alog.git",
+      "branch": null,
+      "commit": "fb49f4cc650bb87132cee206791b7b47e2962d41",
+      "tag": "v0.6.2"
+    },
+    {
+      "record_number": 111,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/muen::tools-libmuxml-dev/python::lxml",
+      "directory": ".",
+      "url": "https://github.com/lxml/lxml/archive/refs/tags/lxml-5.3.1.tar.gz",
+      "filename": "lxml-5.3.1.tar.gz",
+      "digests": {
+        "sha1": "f2c04d861f72d7119697194f6e46d3cdfd272e0c",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 112,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/muen::tools-libmuxml-dev/python::lxml/python::cython",
+      "directory": ".",
+      "url": "https://files.pythonhosted.org/packages/5a/25/886e197c97a4b8e254173002cdc141441e878ff29aaa7d9ba560cd6e4866/cython-3.0.12.tar.gz",
+      "filename": "cython-3.0.12.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "b988bb297ce76c671e28c97d017b95411010f7c77fa6623dd0bb47eed1aee1bc",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 113,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/muen::tools-libmuxml-dev/codelabs::libs::xia-dev",
+      "directory": ".",
+      "url": "https://github.com/codelabs-ch/xia.git",
+      "branch": "simon-devel",
+      "commit": "32c450dd48c3d5e3da538b9495a1debf13845faf",
+      "tag": null
+    },
+    {
+      "record_number": 114,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/muen::tools-libmuxml-dev/codelabs::libs::xia-dev/adacore::gnatcoll-dev",
+      "directory": ".",
+      "url": "https://github.com/AdaCore/gnatcoll-core/archive/refs/tags/v23.0.0.tar.gz",
+      "filename": "v23.0.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "a9e57bfaeaa24c23a738e1d60e0c3b775dc9845c9694c8271efca43381fee85f",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 115,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::sbs-tools",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/sbs-tools.git",
+      "branch": "main",
+      "commit": "1617e94d858a12d6a68988b671ba24af5a40181d",
+      "tag": null
+    },
+    {
+      "record_number": 116,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::dtc",
+      "directory": ".",
+      "url": "https://cdn.kernel.org/pub/software/utils/dtc/dtc-1.6.1.tar.xz",
+      "filename": "dtc-1.6.1.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "65cec529893659a49a89740bb362f507a3b94fc8cd791e76a8d6a2b6f3203473",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 117,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::bootgen",
+      "directory": ".",
+      "url": "https://github.com/Xilinx/bootgen.git",
+      "branch": "xlnx_rel_v2024.1",
+      "commit": "92e09bf37ea17d7b1f0e102a2548f27fb768651c",
+      "tag": null
+    },
+    {
+      "record_number": 118,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::dosfstools",
+      "directory": ".",
+      "url": "https://github.com/dosfstools/dosfstools/releases/download/v4.2/dosfstools-4.2.tar.gz",
+      "filename": "dosfstools-4.2.tar.gz",
+      "digests": {
+        "sha1": "14efc68c64987a9067b6a919ad2870007247686b",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 119,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::mtools",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//mtools/mtools-4.0.44.tar.bz2",
+      "filename": "mtools-4.0.44.tar.bz2",
+      "digests": {
+        "sha1": "93dde7a8ae934b54beaa8ecc7ca134d5cfd1e3f8",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 120,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools",
+      "directory": ".",
+      "url": "https://ftp.denx.de/pub/u-boot/u-boot-2025.04.tar.bz2",
+      "filename": "u-boot-2025.04.tar.bz2",
+      "digests": {
+        "sha1": "6bc4fd62d5b135ff2fbb11fcecbb4b8ca055022a",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 121,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/python::pylibfdt",
+      "directory": ".",
+      "url": "https://files.pythonhosted.org/packages/source/p/pylibfdt/pylibfdt-1.7.2.post1.tar.gz",
+      "filename": "pylibfdt-1.7.2.post1.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "08ec69755f7565dc25e4e640e0315795888d4caeb7f146de4e05bf12b03c94c8",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 122,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/python::pylibfdt/python::setuptools-scm",
+      "directory": ".",
+      "url": "https://github.com/pypa/setuptools-scm/archive/refs/tags/v8.1.0.tar.gz",
+      "filename": "v8.1.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "4407d237183e668574bc893fdf739f8f4cde5f61950b99ead4f370f13224ea2b",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 123,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/python::pylibfdt/devel::swig-tools",
+      "directory": ".",
+      "url": "https://downloads.sourceforge.net/swig/swig-4.3.1.tar.gz",
+      "filename": "swig-4.3.1.tar.gz",
+      "digests": {
+        "sha1": "a111f4433c2348a3186698e1b750b4944bc34c7b",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 124,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/python::pylibfdt/devel::swig-tools/libs::pcre2-dev",
+      "directory": ".",
+      "url": "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.44/pcre2-10.44.tar.bz2",
+      "filename": "pcre2-10.44.tar.bz2",
+      "digests": {
+        "sha1": "ddc37244d49d74ecae510d9d860b812e6e59611a",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 125,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/libs::gnutls-dev",
+      "directory": ".",
+      "url": "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.7.1.tar.xz",
+      "filename": "gnutls-3.8.7.1.tar.xz",
+      "digests": {
+        "sha1": "d66729d963c7a5fb170e4b3afeb63702a9ccd265",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 126,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/libs::gnutls-dev/libs::nettle-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//nettle/nettle-3.10.tar.gz",
+      "filename": "nettle-3.10.tar.gz",
+      "digests": {
+        "sha1": "8bd7614c5f5a156e2a5caa703402f3b4e87dabd5",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 127,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/libs::gnutls-dev/libs::libtasn1-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//libtasn1/libtasn1-4.19.0.tar.gz",
+      "filename": "libtasn1-4.19.0.tar.gz",
+      "digests": {
+        "sha1": "9c4b6616de65513a0a4d27e0b7f25184391ca8fd",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 128,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/libs::gnutls-dev/libs::libunistring-dev",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//libunistring/libunistring-1.2.tar.xz",
+      "filename": "libunistring-1.2.tar.xz",
+      "digests": {
+        "sha1": "914912b4ab91ab57e0ede4b34f3d92296e4dd6ec",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 129,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/utils::efitools",
+      "directory": ".",
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/jejb/efitools.git/snapshot/1.9.2.tar.gz",
+      "filename": "1.9.2.tar.gz",
+      "digests": {
+        "sha1": "351105b03d6589d4fdbca059a0cdfb517728fc75",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 130,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/utils::efitools/utils::sbsigntools",
+      "directory": ".",
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/jejb/sbsigntools.git",
+      "branch": null,
+      "commit": null,
+      "tag": "v0.9.5"
+    },
+    {
+      "record_number": 131,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/utils::efitools/utils::sbsigntools/libs::gnu-efi-dev",
+      "directory": ".",
+      "url": "https://github.com/ncroxon/gnu-efi/archive/refs/tags/4.0.1.tar.gz",
+      "filename": "4.0.1.tar.gz",
+      "digests": {
+        "sha1": "603db6264741da9f84e2a8e386a36fdf69464ba8",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 132,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/utils::efitools/utils::xxd",
+      "directory": ".",
+      "url": "https://github.com/vim/vim/archive/refs/tags/v9.1.0686.tar.gz",
+      "filename": "v9.1.0686.tar.gz",
+      "digests": {
+        "sha1": "2613a32f69c31d746d961a35323e655408c1dd62",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 133,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/libs::glib-tools",
+      "directory": ".",
+      "url": "http://ftp.gnome.org/pub/gnome/sources/glib/2.71/glib-2.71.0.tar.xz",
+      "filename": "glib-2.71.0.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "926816526f6e4bba9af726970ff87be7dac0b70d5805050c6207b7bb17ea4fca",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 134,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::cpio",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//cpio/cpio-2.15.tar.bz2",
+      "filename": "cpio-2.15.tar.bz2",
+      "digests": {
+        "sha1": "db5e3845eb5475ddcb7e8915c3a1458a0c13d787",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 135,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::mulog_analyzer",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/mulog-analyzer.git",
+      "branch": "main",
+      "commit": "9dd90cdf9ab3582d013ca32b1ceb5945b6b4a890",
+      "tag": null
+    },
+    {
+      "record_number": 136,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/arm64/kernel.git",
+      "branch": "main",
+      "commit": "bb48b4c5ec7d33aba58edc2fc89d4d2996ca568f",
+      "tag": null
+    },
+    {
+      "record_number": 137,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::rts",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/rts",
+      "branch": "main",
+      "commit": "2703441440fb864434f897d711db8d3e2e8e1c4a",
+      "tag": null
+    },
+    {
+      "record_number": 138,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/arm64/systems.git",
+      "branch": "main",
+      "commit": "99f9e6264ef11af6ba7db66abedaa1b058683f33",
+      "tag": null
+    },
+    {
+      "record_number": 139,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::linux-image",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/linux.git",
+      "branch": "linux-6.1.82-muen-unified",
+      "commit": "0981bbbe3076c1a3282bcf900f20cf6937b8cb3c",
+      "tag": null
+    },
+    {
+      "record_number": 140,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::linux-image/libs::elfutils-libelf-dev",
+      "directory": ".",
+      "url": "https://sourceware.org/pub/elfutils/0.190/elfutils-0.190.tar.bz2",
+      "filename": "elfutils-0.190.tar.bz2",
+      "digests": {
+        "sha1": null,
+        "sha256": "8e00a3a9b5f04bc1dc273ae86281d2d26ed412020b391ffcc23198f10231d692",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 141,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::linux-image/kernel::kmod",
+      "directory": ".",
+      "url": "https://cdn.kernel.org/pub/linux/utils/kernel/kmod/kmod-33.tar.gz",
+      "filename": "kmod-33.tar.gz",
+      "digests": {
+        "sha1": "1514ec6d35a35ba625e2e817e8646c23ee0437e7",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 142,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::components-dbgserver",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/components.git",
+      "branch": "main",
+      "commit": "60e688ceb4e404a64c7e9eccb3007294095f03f0",
+      "tag": null
+    },
+    {
+      "record_number": 143,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::components-dbgserver/muen::component-libmubase-dev",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/component/base.git",
+      "branch": "main",
+      "commit": "072d18588f378507b5a91f1b227a7367d04856c9",
+      "tag": null
+    },
+    {
+      "record_number": 144,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::components-dbgserver/muen::component-libs-libmucoll-dev",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/component/libs.git",
+      "branch": "main",
+      "commit": "bd101fdfcbdcb1c201b3b8462961e1004e34dbbf",
+      "tag": null
+    },
+    {
+      "record_number": 145,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/adhcp.git",
+      "branch": "master",
+      "commit": "a970333c4a7aff5e57f2f1e765f6861735d19edf",
+      "tag": null
+    },
+    {
+      "record_number": 146,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client/codelabs::libs::anet-dev",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/anet.git",
+      "branch": "master",
+      "commit": "27a6e5a8746fa0779698db982b8ae9f414adf598",
+      "tag": null
+    },
+    {
+      "record_number": 147,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client/codelabs::libs::dbusada-dev",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/dbus-ada.git",
+      "branch": "master",
+      "commit": "39cbd53602a8c94de6548d024b8e78191c8d9e40",
+      "tag": null
+    },
+    {
+      "record_number": 148,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client/codelabs::libs::dbusada-dev/core::dbus-dev",
+      "directory": ".",
+      "url": "https://dbus.freedesktop.org/releases/dbus/dbus-1.16.2.tar.xz",
+      "filename": "dbus-1.16.2.tar.xz",
+      "digests": {
+        "sha1": "f44e9a36af548909e46aec8b29b965aeabc3bfbd",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 149,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client/codelabs::libs::dbusada-dev/libs::dbus-glib-dev",
+      "directory": ".",
+      "url": "https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.112.tar.gz",
+      "filename": "dbus-glib-0.112.tar.gz",
+      "digests": {
+        "sha1": "9eb81f50e36e349f57297d1a2a61b48707a551cc",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 150,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/core::busybox",
+      "directory": ".",
+      "url": "https://busybox.net/downloads/busybox-1.37.0.tar.bz2",
+      "filename": "busybox-1.37.0.tar.bz2",
+      "digests": {
+        "sha1": "50efee4e4438b8aea90ea6895dac818d23125549",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 151,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::ethtool",
+      "directory": ".",
+      "url": "https://www.kernel.org/pub/software/network/ethtool/ethtool-6.15.tar.xz",
+      "filename": "ethtool-6.15.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "9477c365114d910120aaec5336a1d16196c833d8486f7c6da67bedef57880ade",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 152,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::ethtool/libs::libmnl-dev",
+      "directory": ".",
+      "url": "https://netfilter.org/projects/libmnl/files/libmnl-1.0.5.tar.bz2",
+      "filename": "libmnl-1.0.5.tar.bz2",
+      "digests": {
+        "sha1": "63c6456b77f7978a7b37e62c1b38346b2ef2d91c",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 153,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::iperf",
+      "directory": ".",
+      "url": "https://downloads.sourceforge.net/iperf2/iperf-2.0.13.tar.gz",
+      "filename": "iperf-2.0.13.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "c88adec966096a81136dda91b4bd19c27aae06df4d45a7f547a8e50d723778ad",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 154,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::iptables",
+      "directory": ".",
+      "url": "https://www.netfilter.org/projects/iptables/files/iptables-1.8.10.tar.xz",
+      "filename": "iptables-1.8.10.tar.xz",
+      "digests": {
+        "sha1": "ddbebf81eacbf900dc6dd4ed409353930397e0c2",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 155,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::iptables/libs::libnftnl-dev",
+      "directory": ".",
+      "url": "https://netfilter.org/projects/libnftnl/files/libnftnl-1.2.7.tar.xz",
+      "filename": "libnftnl-1.2.7.tar.xz",
+      "digests": {
+        "sha1": "06532b49e06d12a8fc2a33326dc35a638b3ae3c6",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 156,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::openssh",
+      "directory": ".",
+      "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.9p1.tar.gz",
+      "filename": "openssh-9.9p1.tar.gz",
+      "digests": {
+        "sha1": "5ded7eb0add0b02b5d1a1c4bf5cb2c89d2117b53",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 157,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::tcpdump",
+      "directory": ".",
+      "url": "https://www.tcpdump.org/release/tcpdump-4.9.3.tar.gz",
+      "filename": "tcpdump-4.9.3.tar.gz",
+      "digests": {
+        "sha1": "59b309f3620ac4b709de2eaf7bf3a83bf04bc048",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 158,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::tcpdump/libs::libpcap-dev",
+      "directory": ".",
+      "url": "https://www.tcpdump.org/release/libpcap-1.9.1.tar.gz",
+      "filename": "libpcap-1.9.1.tar.gz",
+      "digests": {
+        "sha1": "04d6e619defad5bb17af15f6d2304e79b649786c",
+        "sha256": null,
+        "sha512": null
+      },
+      "digest_classification": "sha1_only"
+    },
+    {
+      "record_number": 159,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/utils::e2fsprogs",
+      "directory": ".",
+      "url": "https://cdn.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v1.47.1/e2fsprogs-1.47.1.tar.xz",
+      "filename": "e2fsprogs-1.47.1.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "5a33dc047fd47284bca4bb10c13cfe7896377ae3d01cb81a05d406025d99e0d1",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 160,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/utils::screen",
+      "directory": ".",
+      "url": "https://mirror.init7.net/gnu//screen/screen-5.0.0.tar.gz",
+      "filename": "screen-5.0.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "f04a39d00a0e5c7c86a55338808903082ad5df4d73df1a2fd3425976aed94971",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 161,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/utils::mingetty",
+      "directory": ".",
+      "url": "https://snapshot.debian.org/archive/debian/20120501T160344Z/pool/main/m/mingetty/mingetty_1.08.orig.tar.gz",
+      "filename": "mingetty_1.08.orig.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "0f55c90ba4faa913d91ef99cbf5cb2eb4dbe2780314c3bb17953f849c8cddd17",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 162,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/utils::s390-tools-ttyrun",
+      "directory": ".",
+      "url": "https://github.com/ibm-s390-linux/s390-tools/archive/refs/tags/v2.37.0.tar.gz",
+      "filename": "v2.37.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "d701413fe80a1185c1c96a0678c2441c22447420722c7f44286c9faf5eeb5d5a",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 163,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/utils::sysbench",
+      "directory": ".",
+      "url": "https://github.com/akopytov/sysbench/archive/refs/tags/1.0.20.tar.gz",
+      "filename": "1.0.20.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "e8ee79b1f399b2d167e6a90de52ccc90e52408f7ade1b9b7135727efe181347f",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 164,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/utils::sysbench/libs::concurrency_kit-dev",
+      "directory": ".",
+      "url": "https://github.com/concurrencykit/ck/archive/refs/tags/0.7.2.tar.gz",
+      "filename": "0.7.2.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "568ebe0bc1988a23843fce6426602e555b7840bf6714edcdf0ed530214977f1b",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 165,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/utils::sysbench/utils::luajit-dev",
+      "directory": ".",
+      "url": "https://github.com/LuaJIT/LuaJIT/archive/refs/tags/v2.1.ROLLING.tar.gz",
+      "filename": "v2.1.ROLLING.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "31d7a4853df4c548bf91c13d3b690d19663d4c06ae952b62606c8225d0b410ad",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 166,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/libs::libgpiod",
+      "directory": ".",
+      "url": "https://cdn.kernel.org/pub/software/libs/libgpiod/libgpiod-2.2.1.tar.xz",
+      "filename": "libgpiod-2.2.1.tar.xz",
+      "digests": {
+        "sha1": null,
+        "sha256": "0e948049c309b87c220fb24ee0d605d7cd5b72f22376e608470903fffa2d4b18",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 167,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muenblock",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/linux/muenblock.git",
+      "branch": "arm64",
+      "commit": "967d6b52f318bd9a8a397085b65047dfd6096660",
+      "tag": null
+    },
+    {
+      "record_number": 168,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muennet",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/linux/muennet.git",
+      "branch": "main",
+      "commit": "d5944ac55d3ba0cc59dfe2b1ea4b127ac8f0bb60",
+      "tag": null
+    },
+    {
+      "record_number": 169,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muennet/libs::libnl-dev",
+      "directory": ".",
+      "url": "https://github.com/thom311/libnl/releases/download/libnl3_10_0/libnl-3.10.0.tar.gz",
+      "filename": "libnl-3.10.0.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "49b3e2235fdb58f5910bbb3ed0de8143b71ffc220571540502eb6c2471f204f5",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 170,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muenevents",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/linux/muenevents.git",
+      "branch": "main",
+      "commit": "de7dbbecc22d82c69f55adb7f80aa7c660eb8c31",
+      "tag": null
+    },
+    {
+      "record_number": 171,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muenfs",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/muen/linux/muenfs.git",
+      "branch": "main",
+      "commit": "6eb06877cc762ac94d0e0a1c33f83afc6dc936da",
+      "tag": null
+    },
+    {
+      "record_number": 172,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/demo::rootfs-content",
+      "directory": ".",
+      "url": "https://git.codelabs.ch/rootfs-content.git",
+      "branch": "main",
+      "commit": "aa596ce5bc1f30c1bde8a9f81094741c817fa5f9",
+      "tag": null
+    },
+    {
+      "record_number": 173,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::qemu",
+      "directory": ".",
+      "url": "https://github.com/Xilinx/qemu.git",
+      "branch": null,
+      "commit": "2319c870e754148ec3b9d40be0d3dbee959c3251",
+      "tag": "xilinx_v2024.1"
+    },
+    {
+      "record_number": 174,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::qemu/libs::gcrypt-tool",
+      "directory": ".",
+      "url": "https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.11.0.tar.bz2",
+      "filename": "libgcrypt-1.11.0.tar.bz2",
+      "digests": {
+        "sha1": null,
+        "sha256": "09120c9867ce7f2081d6aaa1775386b98c2f2f246135761aae47d81f58685b9c",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 175,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::qemu/libs::gcrypt-tool/libs::libgpg-error-tool",
+      "directory": ".",
+      "url": "https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.50.tar.bz2",
+      "filename": "libgpg-error-1.50.tar.bz2",
+      "digests": {
+        "sha1": null,
+        "sha256": "69405349e0a633e444a28c5b35ce8f14484684518a508dc48a089992fe93e20a",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 176,
+      "scm": "url",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::qemu/libs::pixman-dev",
+      "directory": ".",
+      "url": "https://www.cairographics.org/releases/pixman-0.42.2.tar.gz",
+      "filename": "pixman-0.42.2.tar.gz",
+      "digests": {
+        "sha1": null,
+        "sha256": "ea1480efada2fd948bc75366f7c349e1c96d3297d09a3fe62626e38e234a625e",
+        "sha512": null
+      },
+      "digest_classification": "sha256_or_sha512"
+    },
+    {
+      "record_number": 177,
+      "scm": "git",
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::qemu-devicetrees",
+      "directory": ".",
+      "url": "https://github.com/Xilinx/qemu-devicetrees.git",
+      "branch": null,
+      "commit": "b9c88cbfaaa0c8b8be70ea3c74f4cb69fb02a080",
+      "tag": "xilinx_v2024.1"
+    }
+  ]
+}
