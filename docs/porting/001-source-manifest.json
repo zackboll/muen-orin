@@ -1,0 +1,528 @@
+{
+  "schema_version": 1,
+  "captured_utc_date": "2026-09-23",
+  "target": "arm64-qemu-zcu102-minimal-debug",
+  "top_level": {
+    "repository": "git@github.com:zackboll/muen-orin.git",
+    "upstream": "https://github.com/codelabs-ch/bob-muen.git",
+    "commit": "084e3143c52956e0323af1911399abdcaff3bfb9"
+  },
+  "submodules": [
+    {
+      "path": "ci/nci",
+      "url": "https://git.codelabs.ch/nci.git",
+      "commit": "9ad51d75662d8ad731bae959ba0ed71b821b10d8"
+    },
+    {
+      "path": "ci/nci-config",
+      "url": "https://git.codelabs.ch/nci-config.git",
+      "commit": "8ac722ba0551e4958a4d70fe34ab91a1372412e3"
+    }
+  ],
+  "layers": [
+    {
+      "name": "basement",
+      "url": "https://github.com/codelabs-ch/basement.git",
+      "branch": "master-b79927c309a0+codelabs",
+      "commit": "df866d182cf7b3856a099f22a94b3fd38cad87a1"
+    },
+    {
+      "name": "basement-gnu-linux",
+      "url": "https://github.com/codelabs-ch/basement-gnu-linux.git",
+      "branch": "master-c1d98bf23f1f+codelabs",
+      "commit": "5e64cdf792c335efd2be74ca00c1c203127d2c7c"
+    },
+    {
+      "name": "ada",
+      "url": "https://git.codelabs.ch/bob/ada.git",
+      "branch": "main",
+      "commit": "95cb7a0a768dfd87314cbf469b18bd35f606dcb3"
+    },
+    {
+      "name": "codelabs",
+      "url": "https://git.codelabs.ch/bob/codelabs.git",
+      "branch": "main",
+      "commit": "5909d22dcd7f17534e4e56749979d6f742fef977"
+    }
+  ],
+  "bob": {
+    "version": "1.2.0",
+    "query_command": "bob query-scm -r --default '<unset>' -f 'git=git\\t{package}\\t{url}\\t{branch}\\t{commit}\\t{tag}\\t{dir}' -f 'url=url\\t{package}\\t{url}\\t{digestSHA256}\\t{fileName}\\t{dir}' arm64-qemu-zcu102-minimal-debug",
+    "resolved_graph_counts": {
+      "total": 177,
+      "git": 27,
+      "git_with_commit": 26,
+      "git_tag_only": 1,
+      "url": 150,
+      "url_with_sha256": 97,
+      "url_without_sha256": 53
+    }
+  },
+  "resolved_git_scms": [
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit",
+      "url": "https://git.codelabs.ch/muen/tools.git",
+      "branch": "main",
+      "commit": "edea93181f14dfc5a9da4544194c4d11a2185217",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::common-gpr",
+      "url": "https://git.codelabs.ch/muen/common.git",
+      "branch": "main",
+      "commit": "2112e9dd3f5a9346526d3cbf224628112a4d5f72",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::build-cfg-gpr",
+      "url": "https://git.codelabs.ch/muen/build-cfg.git",
+      "branch": "main",
+      "commit": "a9a9196b026b4dbbe02b026dc2c280ae95718475",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/ada::ada-bfd-dev",
+      "url": "https://github.com/codelabs-ch/ada-bfd.git",
+      "branch": "master",
+      "commit": "ec5646af62936eb63769eb7dc76545fcecfd4c72",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/muen::tools-libmulog-dev/codelabs::libs::alog-dev",
+      "url": "https://git.codelabs.ch/alog.git",
+      "branch": null,
+      "commit": "fb49f4cc650bb87132cee206791b7b47e2962d41",
+      "tag": "v0.6.2"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/muen::tools-libmuxml-dev/codelabs::libs::xia-dev",
+      "url": "https://github.com/codelabs-ch/xia.git",
+      "branch": "simon-devel",
+      "commit": "32c450dd48c3d5e3da538b9495a1debf13845faf",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::sbs-tools",
+      "url": "https://git.codelabs.ch/sbs-tools.git",
+      "branch": "main",
+      "commit": "1617e94d858a12d6a68988b671ba24af5a40181d",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::bootgen",
+      "url": "https://github.com/Xilinx/bootgen.git",
+      "branch": "xlnx_rel_v2024.1",
+      "commit": "92e09bf37ea17d7b1f0e102a2548f27fb768651c",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/utils::efitools/utils::sbsigntools",
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/jejb/sbsigntools.git",
+      "branch": null,
+      "commit": null,
+      "tag": "v0.9.5"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::mulog_analyzer",
+      "url": "https://git.codelabs.ch/muen/mulog-analyzer.git",
+      "branch": "main",
+      "commit": "9dd90cdf9ab3582d013ca32b1ceb5945b6b4a890",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug",
+      "url": "https://git.codelabs.ch/muen/arm64/kernel.git",
+      "branch": "main",
+      "commit": "bb48b4c5ec7d33aba58edc2fc89d4d2996ca568f",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::rts",
+      "url": "https://git.codelabs.ch/muen/rts",
+      "branch": "main",
+      "commit": "2703441440fb864434f897d711db8d3e2e8e1c4a",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy",
+      "url": "https://git.codelabs.ch/muen/arm64/systems.git",
+      "branch": "main",
+      "commit": "99f9e6264ef11af6ba7db66abedaa1b058683f33",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::linux-image",
+      "url": "https://git.codelabs.ch/muen/linux.git",
+      "branch": "linux-6.1.82-muen-unified",
+      "commit": "0981bbbe3076c1a3282bcf900f20cf6937b8cb3c",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::components-dbgserver",
+      "url": "https://git.codelabs.ch/muen/components.git",
+      "branch": "main",
+      "commit": "60e688ceb4e404a64c7e9eccb3007294095f03f0",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::components-dbgserver/muen::component-libmubase-dev",
+      "url": "https://git.codelabs.ch/muen/component/base.git",
+      "branch": "main",
+      "commit": "072d18588f378507b5a91f1b227a7367d04856c9",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::components-dbgserver/muen::component-libs-libmucoll-dev",
+      "url": "https://git.codelabs.ch/muen/component/libs.git",
+      "branch": "main",
+      "commit": "bd101fdfcbdcb1c201b3b8462961e1004e34dbbf",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client",
+      "url": "https://git.codelabs.ch/adhcp.git",
+      "branch": "master",
+      "commit": "a970333c4a7aff5e57f2f1e765f6861735d19edf",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client/codelabs::libs::anet-dev",
+      "url": "https://git.codelabs.ch/anet.git",
+      "branch": "master",
+      "commit": "27a6e5a8746fa0779698db982b8ae9f414adf598",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client/codelabs::libs::dbusada-dev",
+      "url": "https://git.codelabs.ch/dbus-ada.git",
+      "branch": "master",
+      "commit": "39cbd53602a8c94de6548d024b8e78191c8d9e40",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muenblock",
+      "url": "https://git.codelabs.ch/muen/linux/muenblock.git",
+      "branch": "arm64",
+      "commit": "967d6b52f318bd9a8a397085b65047dfd6096660",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muennet",
+      "url": "https://git.codelabs.ch/muen/linux/muennet.git",
+      "branch": "main",
+      "commit": "d5944ac55d3ba0cc59dfe2b1ea4b127ac8f0bb60",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muenevents",
+      "url": "https://git.codelabs.ch/muen/linux/muenevents.git",
+      "branch": "main",
+      "commit": "de7dbbecc22d82c69f55adb7f80aa7c660eb8c31",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/muen::muenfs",
+      "url": "https://git.codelabs.ch/muen/linux/muenfs.git",
+      "branch": "main",
+      "commit": "6eb06877cc762ac94d0e0a1c33f83afc6dc936da",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/demo::rootfs-content",
+      "url": "https://git.codelabs.ch/rootfs-content.git",
+      "branch": "main",
+      "commit": "aa596ce5bc1f30c1bde8a9f81094741c817fa5f9",
+      "tag": null
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::qemu",
+      "url": "https://github.com/Xilinx/qemu.git",
+      "branch": null,
+      "commit": "2319c870e754148ec3b9d40be0d3dbee959c3251",
+      "tag": "xilinx_v2024.1"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::xilinx::qemu-devicetrees",
+      "url": "https://github.com/Xilinx/qemu-devicetrees.git",
+      "branch": null,
+      "commit": "b9c88cbfaaa0c8b8be70ea3c74f4cb69fb02a080",
+      "tag": "xilinx_v2024.1"
+    }
+  ],
+  "url_scms_without_configured_sha256": [
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::help2man",
+      "url": "https://mirror.init7.net/gnu//help2man/help2man-1.49.3.tar.xz",
+      "file": "help2man-1.49.3.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::texinfo",
+      "url": "https://mirror.init7.net/gnu//texinfo/texinfo-6.1.tar.xz",
+      "file": "texinfo-6.1.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::autotools/devel::automake",
+      "url": "https://mirror.init7.net/gnu//automake/automake-1.16.5.tar.xz",
+      "file": "automake-1.16.5.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::autotools/devel::libtool",
+      "url": "https://mirror.init7.net/gnu//libtool/libtool-2.4.6.tar.gz",
+      "file": "libtool-2.4.6.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::autotools/devel::pkg-config-aclocal",
+      "url": "https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz",
+      "file": "pkg-config-0.29.2.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::pkg-config-tool",
+      "url": "https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz",
+      "file": "pkg-config-0.29.2.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/python::python3-minimal/libs::libffi-dev",
+      "url": "https://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz",
+      "file": "libffi-3.2.1.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host",
+      "url": "https://mirror.init7.net/gnu//gcc/gcc-13.4.0/gcc-13.4.0.tar.xz",
+      "file": "gcc-13.4.0.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::gmp-dev",
+      "url": "https://mirror.init7.net/gnu//gmp/gmp-6.3.0.tar.xz",
+      "file": "gmp-6.3.0.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::mpfr-dev",
+      "url": "https://mirror.init7.net/gnu//mpfr/mpfr-4.2.1.tar.xz",
+      "file": "mpfr-4.2.1.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/libs::mpc-dev",
+      "url": "https://mirror.init7.net/gnu//mpc/mpc-1.3.1.tar.gz",
+      "file": "mpc-1.3.1.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/devel::autotools-2.69/devel::autoconf-2.69",
+      "url": "https://mirror.init7.net/gnu//autoconf/autoconf-2.69.tar.xz",
+      "file": "autoconf-2.69.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::cross-toolchain/devel::gcc-cross-host/devel::binutils",
+      "url": "https://mirror.init7.net/gnu//binutils/binutils-2.45.tar.xz",
+      "file": "binutils-2.45.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/devel::patch",
+      "url": "https://mirror.init7.net/gnu//patch/patch-2.7.6.tar.xz",
+      "file": "patch-2.7.6.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/net::make-ca",
+      "url": "https://github.com/djlucas/make-ca/archive/v0.6.tar.gz",
+      "file": "v0.6.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/net::make-ca",
+      "url": "https://hg.mozilla.org/mozilla-central/raw-file/100e006a2730/security/nss/lib/ckfw/builtins/certdata.txt",
+      "file": "certdata.txt"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::bash",
+      "url": "https://mirror.init7.net/gnu//bash/bash-5.3.tar.gz",
+      "file": "bash-5.3.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::bzip2",
+      "url": "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz",
+      "file": "bzip2-1.0.8.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::gawk",
+      "url": "https://mirror.init7.net/gnu//gawk/gawk-5.3.0.tar.xz",
+      "file": "gawk-5.3.0.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::grep",
+      "url": "https://mirror.init7.net/gnu//grep/grep-3.11.tar.xz",
+      "file": "grep-3.11.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::rsync",
+      "url": "https://www.samba.org/ftp/rsync/src/rsync-3.3.0.tar.gz",
+      "file": "rsync-3.3.0.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::sed",
+      "url": "https://mirror.init7.net/gnu//sed/sed-4.9.tar.xz",
+      "file": "sed-4.9.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::tar",
+      "url": "https://mirror.init7.net/gnu//tar/tar-1.35.tar.xz",
+      "file": "tar-1.35.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::bootstrap-sandbox/utils::unzip",
+      "url": "https://downloads.sourceforge.net/infozip/unzip60.tar.gz",
+      "file": "unzip60.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/devel::sandbox/devel::git/net::curl-dev",
+      "url": "https://curl.haxx.se/download/curl-8.7.1.tar.xz",
+      "file": "curl-8.7.1.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/python::python3/libs::gdbm-dev",
+      "url": "https://mirror.init7.net/gnu//gdbm/gdbm-1.23.tar.gz",
+      "file": "gdbm-1.23.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/libs::libxml2-bin",
+      "url": "https://download.gnome.org/sources/libxml2/2.13/libxml2-2.13.3.tar.xz",
+      "file": "libxml2-2.13.3.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/libs::libxslt-bin",
+      "url": "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.42.tar.xz",
+      "file": "libxslt-1.1.42.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/adacore::gnatprove",
+      "url": "https://github.com/alire-project/GNAT-FSF-builds/releases/download/gnatprove-12.1.0-1/gnatprove-x86_64-linux-12.1.0-1.tar.gz",
+      "file": "gnatprove-x86_64-linux-12.1.0-1.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::tools-mucbinsplit/muen::tools-libmutools-dev/muen::tools-libmuxml-dev/python::lxml",
+      "url": "https://github.com/lxml/lxml/archive/refs/tags/lxml-5.3.1.tar.gz",
+      "file": "lxml-5.3.1.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::dosfstools",
+      "url": "https://github.com/dosfstools/dosfstools/releases/download/v4.2/dosfstools-4.2.tar.gz",
+      "file": "dosfstools-4.2.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::mtools",
+      "url": "https://mirror.init7.net/gnu//mtools/mtools-4.0.44.tar.bz2",
+      "file": "mtools-4.0.44.tar.bz2"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools",
+      "url": "https://ftp.denx.de/pub/u-boot/u-boot-2025.04.tar.bz2",
+      "file": "u-boot-2025.04.tar.bz2"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/python::pylibfdt/devel::swig-tools",
+      "url": "https://downloads.sourceforge.net/swig/swig-4.3.1.tar.gz",
+      "file": "swig-4.3.1.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/python::pylibfdt/devel::swig-tools/libs::pcre2-dev",
+      "url": "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.44/pcre2-10.44.tar.bz2",
+      "file": "pcre2-10.44.tar.bz2"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/libs::gnutls-dev",
+      "url": "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.7.1.tar.xz",
+      "file": "gnutls-3.8.7.1.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/libs::gnutls-dev/libs::nettle-dev",
+      "url": "https://mirror.init7.net/gnu//nettle/nettle-3.10.tar.gz",
+      "file": "nettle-3.10.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/libs::gnutls-dev/libs::libtasn1-dev",
+      "url": "https://mirror.init7.net/gnu//libtasn1/libtasn1-4.19.0.tar.gz",
+      "file": "libtasn1-4.19.0.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/libs::gnutls-dev/libs::libunistring-dev",
+      "url": "https://mirror.init7.net/gnu//libunistring/libunistring-1.2.tar.xz",
+      "file": "libunistring-1.2.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/utils::efitools",
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/jejb/efitools.git/snapshot/1.9.2.tar.gz",
+      "file": "1.9.2.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/utils::efitools/utils::sbsigntools/libs::gnu-efi-dev",
+      "url": "https://github.com/ncroxon/gnu-efi/archive/refs/tags/4.0.1.tar.gz",
+      "file": "4.0.1.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/bsp::uboot-tools/utils::efitools/utils::xxd",
+      "url": "https://github.com/vim/vim/archive/refs/tags/v9.1.0686.tar.gz",
+      "file": "v9.1.0686.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/utils::cpio",
+      "url": "https://mirror.init7.net/gnu//cpio/cpio-2.15.tar.bz2",
+      "file": "cpio-2.15.tar.bz2"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/muen::arm64-kernel-debug/muen::arm64-systems-policy/muen::linux-image/kernel::kmod",
+      "url": "https://cdn.kernel.org/pub/linux/utils/kernel/kmod/kmod-33.tar.gz",
+      "file": "kmod-33.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client/codelabs::libs::dbusada-dev/core::dbus-dev",
+      "url": "https://dbus.freedesktop.org/releases/dbus/dbus-1.16.2.tar.xz",
+      "file": "dbus-1.16.2.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/codelabs::adhcp-client/codelabs::libs::dbusada-dev/libs::dbus-glib-dev",
+      "url": "https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.112.tar.gz",
+      "file": "dbus-glib-0.112.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/core::busybox",
+      "url": "https://busybox.net/downloads/busybox-1.37.0.tar.bz2",
+      "file": "busybox-1.37.0.tar.bz2"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::ethtool/libs::libmnl-dev",
+      "url": "https://netfilter.org/projects/libmnl/files/libmnl-1.0.5.tar.bz2",
+      "file": "libmnl-1.0.5.tar.bz2"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::iptables",
+      "url": "https://www.netfilter.org/projects/iptables/files/iptables-1.8.10.tar.xz",
+      "file": "iptables-1.8.10.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::iptables/libs::libnftnl-dev",
+      "url": "https://netfilter.org/projects/libnftnl/files/libnftnl-1.2.7.tar.xz",
+      "file": "libnftnl-1.2.7.tar.xz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::openssh",
+      "url": "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.9p1.tar.gz",
+      "file": "openssh-9.9p1.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::tcpdump",
+      "url": "https://www.tcpdump.org/release/tcpdump-4.9.3.tar.gz",
+      "file": "tcpdump-4.9.3.tar.gz"
+    },
+    {
+      "package": "arm64-qemu-zcu102-minimal-debug/demo::rootfs/net::tcpdump/libs::libpcap-dev",
+      "url": "https://www.tcpdump.org/release/libpcap-1.9.1.tar.gz",
+      "file": "libpcap-1.9.1.tar.gz"
+    }
+  ],
+  "reselection": {
+    "instructions": [
+      "Checkout top_level.commit.",
+      "Initialize submodules and verify their commits.",
+      "Run bob layers update with Bob 1.2.0 and verify layer commits.",
+      "Run the query_command without user.yaml, override_layers.yaml, or -D overrides and compare all records."
+    ],
+    "limitation": "The closure is not fully content-pinned: one Git SCM is tag-only and 53 URL SCMs have no configured SHA-256. A top-level commit plus layer commits cannot by itself reselect those bytes."
+  }
+}
