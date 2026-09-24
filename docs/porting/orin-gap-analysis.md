@@ -66,12 +66,13 @@ installed firmware.
   T234 TRM and firmware/secure-boot documentation before implementation.
 
 Task 003 source inspection narrows this gap. The selected NVIDIA PrePi source
-transitions from EL3 to non-secure EL2 before UEFI, and NVIDIA UEFI uses standard
-`LoadImage`/`StartImage`. The best-supported route is therefore an authorized
-AArch64 EFI loader that captures the final map/DT, calls `ExitBootServices`, and
-hands off to a guarded single-core EL2 diagnostic. Installed firmware, image
-authentication and actual entry EL remain prerequisites; an EFI application's
-entry state is not itself a post-firmware Muen handoff. See the contract and
+has distinct EL1, EL2 and EL3 entry paths; only EL3 performs its SCR/SPSR,
+CNTFRQ and GIC setup. Accessible evidence does not show which path T234's
+preceding firmware selects or establish final state. NVIDIA UEFI does use
+standard `LoadImage`/`StartImage`, so the candidate remains one owner-approved
+AArch64 EFI image with an embedded diagnostic. Installed policy, cryptographic
+enforcement, actual entry EL and separate non-secure-state evidence remain
+prerequisites. See the contract and
 [`003-el2-diagnostic-plan.md`](003-el2-diagnostic-plan.md).
 
 ### Interrupt controller — implementation gap
@@ -124,8 +125,9 @@ entry state is not itself a post-firmware Muen handoff. See the contract and
   while the Muen project compiles for Cortex-A53. Both implement ARMv8-A
   virtualization, but that does not validate feature-register assumptions,
   cache maintenance, TLB invalidation scopes, barriers, VMID width, or errata.
-* **Build/runtime evidence:** Cortex-A53 code compiled; it did not run. No
-  Cortex-A78AE/Orin test occurred.
+* **Build/runtime evidence:** Task 001 compiled the Cortex-A53 code without a
+  boot. Task 002 subsequently ran that ZynqMP/QEMU path; no Cortex-A78AE/Orin
+  test occurred.
 * **Unknown:** Orin cache topology and coherency requirements, supported
   translation granules/IPA size/VMID width, FEAT_* behavior, and applicable
   Cortex-A78/Tegra errata. Audit against the target ID registers and manuals.
@@ -142,8 +144,9 @@ entry state is not itself a post-firmware Muen handoff. See the contract and
   describes three Tegra234 `nvidia,tegra234-smmu`/`nvidia,smmu-500` instances
   (`smmu_iso`, `smmu_niso0`, `smmu_niso1`) at different addresses, and devices
   use Tegra234-specific stream IDs.
-* **Build/runtime evidence:** ZynqMP SMMU policy generation/build passed, but no
-  SMMU code ran; no Orin DMA or fault-containment experiment occurred.
+* **Build/runtime evidence:** ZynqMP SMMU policy generation/build passed and
+  Task 002 booted the complete QEMU system. Its plan did not perform a distinct
+  SMMU/DMA-containment test, and no Orin test occurred; boot alone proves none.
 * **Unknown:** secure/non-secure ownership, bypass/default-domain state, context
   bank availability, SID routing, GPU and firmware-managed DMA, ATS/PCIe details,
   and whether all relevant masters can be isolated. Do not assign GPU/CUDA or
@@ -182,8 +185,9 @@ entry state is not itself a post-firmware Muen handoff. See the contract and
   The Orin Nano developer-kit guide instead documents USB-C device mode exposing
   USB serial access. Actual routing depends on the selected module/carrier and
   board configuration.
-* **Build/runtime evidence:** ZynqMP console code built; no console ran and no
-  Orin console test occurred.
+* **Build/runtime evidence:** Task 001 built the ZynqMP console code without a
+  boot. Task 002 subsequently exercised QEMU serial assertions; no Orin console
+  test occurred.
 * **Unknown:** preferred early-console path for an EL2 payload, TCU mailbox
   firmware dependencies, clock/reset/pinmux state, and whether UARTA is safely
   available. A new hardware/platform policy and console driver are required.
@@ -199,9 +203,9 @@ entry state is not itself a post-firmware Muen handoff. See the contract and
 * **Documented behavior:** NVIDIA's L4T platform guide relies on T234 BCT,
   device trees, firmware, BPMP-managed clocks/resets, and board-specific drivers.
   Upstream Tegra234 DTS has a materially different device graph and IOMMU SIDs.
-* **Build/runtime evidence:** the existing ZynqMP QEMU image built, but QEMU did
-  not start because of the host launcher prerequisite. No Linux subject boot,
-  Orin guest, NVIDIA driver, GPU, or CUDA test occurred.
+* **Build/runtime evidence:** Task 001 stopped before QEMU. Task 002 subsequently
+  booted the unchanged ZynqMP/QEMU system twice and ran its pinned Linux-subject
+  plan. No Orin guest, NVIDIA driver, GPU, or CUDA test occurred.
 * **Unknown:** which upstream/L4T kernel can run as a Muen subject, required
   hypercalls/paravirtual drivers, firmware carveouts and mailbox services,
   device assignment, initramfs userspace, and NVIDIA proprietary component
@@ -252,9 +256,10 @@ architecture offer potential reuse, but boot/firmware handoff, Cortex-A78AE CPU
 setup, GICv3, multicore PSCI flow, SMMU topology and stream IDs, console, policy,
 and Linux device/firmware integration are concrete gaps. Task 003 completed the
 read-only platform-contract study. It establishes a target-gated EFI-to-EL2
-diagnostic candidate, GICv3 firmware initialization evidence, a three-controller
-SMMUv2 topology in Linux hardware descriptions, firmware-programmed timer
-frequency, and TCU-versus-16550 console distinctions. It does not establish the
+diagnostic candidate, conditional EL3-path GIC/timer initialization source
+observations, a three-controller SMMUv2 topology in Linux hardware descriptions,
+and TCU-versus-16550 console distinctions. It does not identify the actual PrePi
+path, effective build values, final firmware state, or establish the
 unknown target's installed state. The next task is the bounded diagnostic
 milestone, only after board, firmware, security, recovery and console inventory;
 it is not yet a Muen port or isolation test.

@@ -1,146 +1,153 @@
 # Task 003: first Tegra234 EL2 diagnostic experiment
 
-This is a specification, not an implementation or execution record. It resolves
-one question: can an authorized EFI image on the actual Jetson preserve NVIDIA
-initialization, leave boot services, and execute a controlled single-core
-non-secure EL2 payload with a trustworthy memory/DT handoff?
-
-Evidence IDs resolve through [`003-source-index.json`](003-source-index.json);
-the ownership rationale is in
+This is a specification, not an implementation or execution record. It asks
+whether one owner-approved AArch64 EFI image can preserve NVIDIA initialization,
+leave boot services, and enter a bounded single-core diagnostic at EL2. No Orin
+was accessed. Evidence IDs resolve through
+[`003-source-index.json`](003-source-index.json); ownership rationale is in
 [`003-tegra234-platform-contract.md`](003-tegra234-platform-contract.md).
 
-## Gate 0: prerequisites before any target execution
+## Gate 0: prerequisites
 
-Record, without changing the device:
+Record without changing the device: module SKU/RAM and carrier revision;
+installed BSP/firmware; a removable or one-shot boot route; fuse/Secure Boot and
+installed image-execution policy; an owner-approved signing/authorization path;
+known-good normal boot and recovery-mode access; exact safe console route; and a
+firmware DT/final EFI-map capture plan. Stop rather than disable Secure Boot,
+enroll an unapproved key, change fuses, flash, use `/dev/mem`, or infer Nano
+wiring from AGX documentation [NVIDIA-UEFI-R3644, NVIDIA-NX-NANO-R3644].
 
-1. module P-number/SKU and RAM size; carrier P-number and FAB/revision;
-2. installed Jetson firmware/BSP version as reported by UEFI or the existing OS;
-3. boot media/order and a removable or one-shot boot option that does not replace
-   the known-good entry;
-4. Secure Boot/fuse state and an owner-approved image-authentication method;
-5. documented recovery-mode access and a tested known-good normal boot;
-6. exact console connector, voltage and route from the correct carrier manual;
-7. an installed-firmware DT and final EFI-map capture plan.
+Owner approval, firmware acceptance, cryptographic authentication, and record
+integrity are separate claims. Owner approval authorizes the experiment.
+`LoadImage`/`StartImage` acceptance demonstrates only acceptance by the policy
+actually installed. It demonstrates cryptographic image authentication only
+when that policy and its enforcement were independently established. A record
+CRC detects accidental corruption; it authenticates neither producer nor
+contents and proves neither isolation nor execution integrity [UEFI-2.10].
 
-Stop if any step would require disabling Secure Boot, enrolling an unapproved
-key, changing fuses, flashing firmware/partitions, opening `/dev/mem`, or using
-an AGX connector label as Nano wiring guidance. r36.4.4 remains reference
-evidence until the installed version is identified [NVIDIA-UEFI-R3644,
-NVIDIA-NX-NANO-R3644].
+## One-image artifact and placement contract
 
-## Artifact and load route
+Milestone 1 uses exactly one AArch64 PE/COFF EFI application. Phase A and the
+Phase B diagnostic are linked into that same image; all diagnostic instructions
+and the EL2 vector table reside in executable image sections covered by the
+image authentication operation. There is no external raw executable payload,
+runtime code copy, or private executable allocation. An external-payload design
+is deferred and would require a separate reviewed authentication, executable-
+mapping, relocation, and cache-maintenance contract.
 
-Use one AArch64 PE/COFF EFI application accepted by the existing UEFI policy,
-loaded from removable media or a one-shot boot option. Do not overwrite
-`BOOTAA64.EFI`, L4TLauncher, UEFI, the A/B chain, DTB, or normal boot variables.
-The application contains or reads a tiny position-controlled payload, allocates
-its pages with UEFI, and never treats unreported RAM as usable [UEFI-2.10].
+The firmware image loader supplies the image-section mappings and permissions.
+The application must verify from its loaded-image metadata that the Phase B and
+vector ranges are within the loaded image and must not make a data allocation
+executable or disable firmware memory protections. Allocate stack, handoff,
+copied final map, DT snapshot if required, and result records as writable
+`EfiLoaderData`; none contains executable code. The image's `EfiLoaderCode` and
+these `EfiLoaderData` pages remain allocated and mapped throughout Phase B.
+Because no code is copied, no code-copy cache maintenance is required. The
+diagnostic retains the inherited identity mappings required by UEFI 2.10
+section 2.3.6 and neither replaces nor reclaims the active translation tables or
+any backing memory during milestone 1 [UEFI-2.10].
 
-Phase A remains an EFI application. Phase B occurs only after a successful
-`GetMemoryMap`/`ExitBootServices` sequence and transfers through the private ABI
-defined in the contract. This transition—not EFI application entry—is the EL2
-experiment. NVIDIA's L4T `LoadImage`/`StartImage` path is implementation evidence
-that EFI images are launched, not a guarantee about this artifact's signature
-or final state [NVIDIA-EDK2-R3644].
+## Register-access policy
 
-## Phase A: firmware-resident probe
+An `MRS` is not intrinsically safe: architectural controls can make a read trap
+or be UNDEFINED. DAIF masks asynchronous classes, not synchronous system-register
+traps. An EL2 vector cannot recover an exception routed to EL3. Phase A therefore
+performs the mandatory set below before the exit sequence; Phase B performs no
+exploratory register read before switching immediately to the owned stack/vector
+context. Milestone 1 has no optional register probes: every non-mandatory field
+below is explicitly `not probed`. A later plan may promote one only after review
+of its exact feature, EL and higher-privilege access pseudocode against matching
+installed-firmware evidence [ARM-ARM-2025-06, ARM-GIC-IHI0069H].
 
-Using only UEFI protocols, emit and retain a compact, versioned record containing:
+| Register/operation | Purpose and architectural feature | Required EL, higher controls and possible trap | M1 policy if permission is not established |
+|---|---|---|---|
+| `CurrentEL` | Report the current exception level; FEAT_AA64 | Read at EL1 or higher and UNDEFINED at EL0. Under nested virtualization an EL1 read with effective `HCR_EL2.NV` set can report EL2, so the value alone is not permission evidence | **Mandatory Phase A.** If not EL2, emit `STOP-NOT-EL2`. If EL2, continue only when matching firmware evidence excludes an emulated EL1 result and establishes real EL2 execution; otherwise stop before exit. Phase B does not re-probe before vectors. |
+| `SP` selection and `DAIFSet` | Enter the owned stack with asynchronous exceptions masked; base AArch64 | Executed at the current EL. DAIF does not mask synchronous exceptions or make later accesses safe | **Mandatory transition.** Establish ordinary EL2 execution first; otherwise do not exit. No DAIF observation is proposed. |
+| `VBAR_EL2` write | Install the aligned in-image EL2 vector table; FEAT_AA64 and EL2 | The DDI 0601 (2025-06) access pseudocode permits the write at EL2; at EL1 it is UNDEFINED or, under nested virtualization controls, can trap to EL2. The vector address also has architectural alignment/address constraints | **Mandatory transition prerequisite.** Establish real EL2 execution and a conforming vector address before exit; otherwise stop in Phase A. Do not test permission after exit. No `VBAR_EL2` read is proposed. |
+| `ICC_SRE_EL2` | GICv3 system-register-interface enable state; GICv3 system-register interface | EL2-only, but `ICC_SRE_EL3.Enable == 0` causes EL2 access to trap to EL3 under the GIC access pseudocode. `CurrentEL == EL2` is insufficient | **Omitted in milestone 1:** always record `not probed` unless a later reviewed plan first establishes EL3 controls. Never probe GIC MMIO as fallback. |
+| `MPIDR_EL1` | Boot-CPU affinity; FEAT_AA64 | EL1+ architectural ID register; exact higher-control/access pseudocode was not inspected for implementation | Deferred; `not probed`. Use DT topology only. |
+| `MIDR_EL1` | PE implementer/part/revision; FEAT_AA64 | EL1+ architectural ID register; exact higher-control/access pseudocode was not inspected for implementation | Deferred; `not probed`. |
+| `ID_AA64PFR0_EL1` | AArch64 PE feature/EL presence; FEAT_AA64 | EL1+ feature ID register; exact higher-control/access pseudocode was not inspected for implementation | Deferred; `not probed`. |
+| `ID_AA64MMFR0_EL1`, `ID_AA64MMFR1_EL1` | Physical-address, granule and memory-model features; FEAT_AA64 | EL1+ feature ID registers; exact higher-control/access pseudocode was not inspected for implementation | Deferred; each `not probed`. No translation change is attempted. |
+| `CNTFRQ_EL0` | Firmware-reported nominal counter frequency; generic timer | System-counter feature; exact EL3 timer/ECV access controls and trap destination were not inspected for implementation | Deferred; `not probed`. It would report, not independently measure, frequency. |
+| `CNTPCT_EL0` | Physical counter progress; generic timer | System-counter feature; exact EL2/EL3 timer/ECV controls and trap destination were not inspected for implementation | Deferred; both proposed samples are `not probed`; no progress claim. |
+| `DAIF` read | Incoming asynchronous exception masks; AArch64 PSTATE | EL1+ PSTATE access; exact access pseudocode was not inspected. DAIF never masks synchronous traps | Deferred; `not probed`. `DAIFSet` remains a separate mandatory transition instruction. |
+| `SCTLR_EL2` | Incoming EL2 MMU/cache/control state; FEAT_AA64 and EL2 | EL2 control register; exact EL3 controls/trap destination were not inspected for implementation | Deferred; `not probed`; inherited translations are retained. |
+| `TCR_EL2`, `TTBR0_EL2`, `MAIR_EL2` | Incoming EL2 translation regime; FEAT_AA64 and EL2 | EL2 translation registers; exact feature variants, EL3 controls and trap destinations were not inspected | Deferred; each `not probed`; active tables/backing pages are retained. |
+| `HCR_EL2` | EL2 virtualization/host controls; FEAT_AA64 and EL2 | EL2 control register; exact EL3 controls/trap destination were not inspected for implementation | Deferred; `not probed`; no virtualization control is changed. |
+| `CNTHCTL_EL2`, `CNTVOFF_EL2` | EL1 timer access and virtual counter offset; generic timer and EL2 | EL2 timer registers; exact EL3 timer/ECV controls and trap destinations were not inspected | Deferred; each `not probed`; no timer control is changed. |
+| `VBAR_EL2` read | Incoming EL2 vector base; FEAT_AA64 and EL2 | DDI 0601 permits the read at EL2 and makes EL1 behavior UNDEFINED or nested-virtualization-controlled | Deferred; `not probed`. This is distinct from the mandatory write above. |
+| GIC/SMMU/UART MMIO | Controller identity/state or output | Device mapping, security attribution, clocking and ownership are platform controls; access can abort or have side effects | Not probed. No exploratory MMIO and no writes to enable higher-privilege access. |
 
-* firmware vendor/revision and loaded-image device path;
-* `CurrentEL`, `MPIDR_EL1`, `MIDR_EL1`, `ID_AA64PFR0_EL1`,
-  `ID_AA64MMFR0_EL1`, `ID_AA64MMFR1_EL1`, `CNTFRQ_EL0`, two counter samples,
-  DAIF, `SCTLR_EL2`, `HCR_EL2`, `CNTHCTL_EL2`, `CNTVOFF_EL2`, `VBAR_EL2` and
-  `ICC_SRE_EL2` only if running at EL2;
-* firmware DT address, size, compatible/model, `/chosen`, `/memory`,
-  `/reserved-memory`, CPU/PSCI, GIC, timer, SMMU and serial nodes;
-* payload allocation and the final UEFI memory-map descriptors, descriptor size/
-  version and map key;
-* CRC/hash and monotonically numbered phase markers.
+The primary locators are Arm A-profile register descriptions DDI 0601
+(2025-06), `CurrentEL` and `VBAR_EL2` access pseudocode, and GIC Architecture
+Specification IHI 0069H §12.4.11, Table 12-10 and `ICC_SRE_EL2` access
+pseudocode. These exact primary texts were inspected through Arm's official
+documentation service; deferred registers were not reviewed for implementation.
 
-Send the Phase A summary through UEFI `ConOut` and keep the full record in
-loader-owned pages. An EFI banner proves only EFI execution. If `CurrentEL` is
-not EL2, print `STOP-NOT-EL2`, return to firmware without calling
-`ExitBootServices`, and retain the observation as evidence that a higher-
-privilege transition would be needed. The experiment does not try to write
-EL3-owned registers.
+## Phase A and final map/exit state machine
 
-Retrieve the final map immediately before `ExitBootServices`; retry only as
-UEFI 2.10 permits when the key is stale. After success, invoke no boot service
-and do not return to UEFI [UEFI-2.10].
+Using UEFI protocols, build a versioned record containing firmware and loaded-
+image identity, the mandatory/deferred register fields above, firmware DT and
+relevant nodes, image/stack/handoff/result ranges, the final memory-map
+descriptors and map metadata, monotonic phase markers, and a CRC. `ConOut` may be
+used for the pre-exit summary. Finish all protocol use, output preparation,
+allocations, image/range validation, payload preparation, and watchdog policy
+before beginning the final map/exit sequence.
 
-## Phase B: bounded post-firmware payload
+The state machine is:
 
-Run on the boot CPU only with DAIF masked. Install a payload-owned, aligned
-`VBAR_EL2` before deliberate exceptions. Validate the handoff magic/version,
-checksum, payload range, DT bounds and memory-map bounds. Record—before changing
-them—the same architectural registers plus `TCR_EL2`, `TTBR0_EL2`, `MAIR_EL2`
-and cache-line feature data.
+1. **Prepared:** all resources and output are complete. Obtain `GetMemoryMap`.
+2. **Exit attempt:** make no intervening allocation or protocol call; call
+   `ExitBootServices(ImageHandle, MapKey)`.
+3. **One permitted recovery:** if the first call returns `EFI_INVALID_PARAMETER`,
+   call only `GetMemoryMap` and `ExitBootServices` again with the new key. Do not
+   use `ConOut`, device-handle protocols, allocation, or ordinary logging in this
+   restricted path. Any other failure, or second failure, follows the pre-agreed
+   reset/recovery procedure.
+4. **Exited:** after success, call no boot service and no device-handle protocol,
+   and never return to firmware. Immediately mask DAIF and branch to a tiny
+   in-image transition stub that selects the preallocated aligned stack, installs
+   the in-image aligned `VBAR_EL2`, validates handoff bounds/CRC, and enters the
+   diagnostic. There is no intervening exploratory probe [UEFI-2.10].
 
-The payload may:
+## Phase B: bounded diagnostic
 
-1. prove EL2 by reading `CurrentEL`;
-2. prove the architectural counter advances and report `CNTFRQ_EL0`;
-3. validate that its code, stack, handoff and output buffer occupy loader-owned
-   memory and do not overlap UEFI runtime/reserved or DT reserved ranges;
-4. install vectors and execute one synchronous, self-contained exception test
-   only after the vector table is active;
-5. write a fixed banner and full result to the preallocated RAM record;
-6. use post-exit serial only if Gate 0 separately established that exact route
-   and its clock/reset/mailbox service remains usable.
+On the boot CPU only, with inherited EL2 stage-1 mappings retained, validate the
+handoff and confirm code, vector, stack, map, DT and output ranges remain within
+retained image/loader pages and outside reported runtime/reserved and DT-reserved
+ranges. Write a fixed banner/result to the preallocated RAM record. A deliberate,
+self-contained synchronous exception may be executed only after `VBAR_EL2` is
+active; it tests that local EL2 vector path, not recovery from exceptions routed
+to EL3. Post-exit serial is disallowed for milestone 1 unless a later reviewed
+contract establishes the exact route and retained service; RAM is not considered
+observed until recovered by an approved mechanism.
 
-It must not enable interrupts, write GIC distributor/redistributor/interface
-state, arm timer PPIs, call PSCI, release CPUs, touch SMMU registers, start DMA,
-initialize devices, install stage-2 translation, run Muen, or run a subject.
-Keeping the inherited EL2 stage-1 mapping for this diagnostic minimizes change;
-the payload records it but does not pretend that it satisfies Muen's MMU-off
-entry assumption [MUEN-KERNEL].
+Do not enable interrupts, alter GIC/SMMU/security/timer controls, arm a timer PPI,
+call PSCI, release CPUs, start DMA, initialize devices, install stage 2, reclaim
+inherited tables/buffers, run Muen, or run a subject. If an unexpected local
+exception reaches the installed vector, record syndrome and stop. There is no
+MMIO fallback. A preselected watchdog/reset mechanism must not require boot
+services after exit [MUEN-KERNEL].
 
-If no proven post-exit transport exists, Phase B ends in a bounded wait/watchdog
-or reset path selected before execution. RAM output is not considered observed
-until recovered by an approved mechanism that does not assume persistence.
+## Evidence and acceptance limits
 
-## Higher-privilege/firmware evidence versus payload observations
+`CurrentEL` reports EL only. The non-secure assumption requires separate matching
+firmware/security evidence because `CurrentEL` does not report Security state.
+The payload cannot establish EL3 interrupt grouping, secure SMMU ownership,
+hidden carveouts, DMA quiescence, firmware-service lifetime, fuse state, or
+carrier routing. Readable state is not proof of ownership.
 
-The payload can observe EL, architectural ID/timer/translation registers,
-MPIDR, the supplied DT/map, and whether its vectors execute. It cannot establish
-EL3 interrupt grouping/security controls, secure SMMU ownership, hidden
-carveouts, DMA quiescence, firmware's intended service lifetime, fuse state, or
-the correctness of carrier routing. Those require vendor documentation,
-installed-firmware source/configuration, or separately approved higher-
-privilege evidence. Readable MMIO is not proof of ownership.
+**EFI-stage success** means the owner-approved image was accepted and ran, the
+actual entry EL was recorded, and board-visible DT/map data were captured. It is
+not a signature-verification claim absent established policy. **EL2 diagnostic
+success** means the same CPU completed the controlled post-exit transition,
+owned ranges validated, the local vector test completed, and a CRC-valid record
+was retrieved. CRC validity proves only corruption detection, not authenticity,
+isolation, interrupt ownership, SMMU/DMA containment, multicore operation, Muen,
+or Linux-subject execution.
 
-## Stop and recovery rules
-
-Stop before Phase B on authentication failure, unexpected EL, invalid map/DT,
-overlap, unsupported feature/granule, missing output/recovery path, inability to
-disable the UEFI watchdog safely, or any divergence from the inventoried board.
-In Phase B, any unexpected exception records the syndrome if vectors work and
-then stops; there is no exploratory MMIO fallback.
-
-The normal boot entry and media remain unchanged. Remove the test media or let
-the one-shot option expire to recover. Keep NVIDIA recovery-mode instructions
-available, but do not flash as part of this experiment. A power-cycle/reset is
-acceptable only under the pre-agreed board procedure.
-
-## Acceptance criteria and limits
-
-**EFI-execution success:** an authenticated image runs and its Phase A record
-identifies firmware, board-visible DT/map and actual entry EL.
-
-**EL2-environment success:** after successful `ExitBootServices`, the same boot
-CPU validates the handoff at non-secure EL2, the counter advances at the reported
-frequency, payload-owned vectors handle the planned exception, memory ranges do
-not overlap reported reservations, and a checksum-valid result is retrieved.
-
-Failure of Phase B after Phase A is still useful evidence and must not be
-papered over. Success establishes only a usable single-core diagnostic handoff.
-It does **not** establish interrupt ownership, SMMU/DMA isolation, multicore,
-Muen execution, a runnable Linux subject, or subject isolation.
-
-## Explicitly later work
-
-Only after this milestone may a next design map GICv3 ownership and timer PPIs,
-then separately model all three SMMUs and active DMA masters. Porting Muen,
-multicore, device passthrough, Linux-on-Orin, GPU/CUDA and proof work are outside
-this experiment.
+Stop before exit on unexpected EL, invalid map/DT/ranges, missing recovery/output
+path, or unmet inventory/authentication conditions. Later work may separately
+design GICv3/timer ownership, SMMU/DMA containment, multicore, Muen, Linux, or an
+external payload. This document stops at the review gate.

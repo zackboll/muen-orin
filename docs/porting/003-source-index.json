@@ -65,7 +65,7 @@
       "release": "uefi-202405.3 (r36.4.4)",
       "commit": "350c50a65a7b30d916b8c1901ed940f6d69bbcaa",
       "url": "https://github.com/NVIDIA/edk2-nvidia/tree/350c50a65a7b30d916b8c1901ed940f6d69bbcaa",
-      "locator": "Silicon/NVIDIA/PrePi/AArch64/ModuleEntryPoint.S; PrePi/AArch64/ArchPrePi.c; Application/L4TLauncher/L4TLauncher.c; Library/PlatformResourceLib/T234ResourceConfig.c; Library/TegraSerialPortLib/TegraSerialPortLib.c; Library/TegraCombinedSerialPort/TegraCombinedSerialPortLib.c",
+      "locator": "Silicon/NVIDIA/PrePi/AArch64/ModuleEntryPoint.S:48-122 (three entry paths; EL3-only setup); Silicon/NVIDIA/PrePi/AArch64/ArchPrePi.c:14-34 (EL2-conditional HCR/CNTHCTL writes); Application/L4TLauncher/L4TLauncher.c; Library/PlatformResourceLib/T234ResourceConfig.c; Library/TegraSerialPortLib/TegraSerialPortLib.c; Library/TegraCombinedSerialPort/TegraCombinedSerialPortLib.c",
       "accessed": "2026-09-24",
       "release_archive_url": "https://github.com/NVIDIA/edk2-nvidia/releases/download/uefi-202405.3/edk2-nvidia-r36.4.4.tar.gz",
       "release_archive_sha256": "a78472c537b6396c21326408c27ba12661b8d90e84a7da6e6c32741bd1417f75"
@@ -77,8 +77,9 @@
       "release": "uefi-202405.3",
       "commit": "338f5d9e7c525ab2ec0882bb6fc699f62d107b31",
       "url": "https://github.com/NVIDIA/edk2/tree/338f5d9e7c525ab2ec0882bb6fc699f62d107b31",
-      "locator": "ArmPkg/ArmPkg.dec: AArch64 PcdArmScr and PcdArmNonSecModeTransition defaults",
-      "accessed": "2026-09-24"
+      "locator": "ArmPkg/Include/AsmMacroIoLibV8.h:15-35 (EL1_OR_EL2_OR_EL3); ArmPkg/ArmPkg.dec (AArch64 PcdArmScr and PcdArmNonSecModeTransition defaults)",
+      "accessed": "2026-09-24",
+      "note": "DEC values are declared defaults, not proof of effective values in an NVIDIA platform build."
     },
     {
       "id": "UEFI-2.10",
@@ -86,8 +87,24 @@
       "title": "UEFI Specification",
       "revision": "2.10",
       "url": "https://uefi.org/specs/UEFI/2.10/",
-      "locator": "4.1 UEFI Image Entry Point; 4.6.1 EFI Configuration Table; 7.2.3 GetMemoryMap; 7.4.1 LoadImage; 7.4.2 StartImage; 7.4.6 ExitBootServices; Table 7.6",
-      "accessed": "2026-09-24"
+      "locator": "2.3.6 AArch64 Platforms (especially 2.3.6.1-.3); 4.1 UEFI Image Entry Point; 4.6.1 EFI Configuration Table; 7.2.3 GetMemoryMap; 7.4.1 LoadImage; 7.4.2 StartImage; 7.4.6 ExitBootServices; Table 7.6; 32.3.1 UEFI Image Validation",
+      "accessed": "2026-09-24",
+      "note": "Normative HTML text was inspected. Image acceptance is not represented as cryptographic authentication unless the installed policy and enforcement are established."
+    },
+    {
+      "id": "ARM-ARM-2025-06",
+      "kind": "specification",
+      "title": "Arm A-profile A64 System Register Descriptions",
+      "revision": "DDI 0601, 2025-06",
+      "url": "https://developer.arm.com/documentation/ddi0601/2025-06/",
+      "locator": "AArch64 Registers: CurrentEL, purpose and MRS access pseudocode; VBAR_EL2, purpose, vector-address constraints and MRS/MSR access pseudocode",
+      "accessed": "2026-09-24",
+      "availability": "normative topic text inspected through the official Arm documentation service",
+      "topic_urls": [
+        "https://documentation-service.arm.com/documentation/ddi0601/2025-06/AArch64-Registers/CurrentEL--Current-Exception-Level",
+        "https://documentation-service.arm.com/documentation/ddi0601/2025-06/AArch64-Registers/VBAR-EL2--Vector-Base-Address-Register--EL2-"
+      ],
+      "note": "Only the registers needed by milestone 1 were inspected. Other previously proposed observations are deferred and are not represented as access-reviewed. CurrentEL can report EL2 for an EL1 read under effective HCR_EL2.NV controls, so it is not sufficient permission evidence by itself."
     },
     {
       "id": "LINUX-AARCH64-BOOT",
@@ -100,23 +117,17 @@
       "note": "Linux's boot ABI is not treated as the custom EL2 payload ABI."
     },
     {
-      "id": "ARM-PSCI",
-      "kind": "specification",
-      "title": "Power State Coordination Interface",
-      "revision": "DEN0022 PSCI specification, current landing page",
-      "url": "https://developer.arm.com/documentation/den0022/latest/",
-      "locator": "CPU_ON; AFFINITY_INFO; PSCI conduit",
-      "accessed": "2026-09-24",
-      "note": "The Arm landing URL does not expose revision text to the automated reader; no unavailable PDF was claimed as inspected. Linux DT evidence is used only to identify the advertised PSCI interface."
-    },
-    {
-      "id": "ARM-GIC",
+      "id": "ARM-GIC-IHI0069H",
       "kind": "specification",
       "title": "Arm Generic Interrupt Controller Architecture Specification",
-      "revision": "IHI 0069, current landing page",
-      "url": "https://developer.arm.com/documentation/ihi0069/latest/",
-      "locator": "GICv3 distributor, redistributor, system-register CPU interface, virtualization interface and interrupt groups",
-      "accessed": "2026-09-24"
+      "revision": "IHI 0069H",
+      "url": "https://developer.arm.com/documentation/ihi0069/h/",
+      "locator": "§12.4.11 ICC_SRE_EL2; Table 12-10 ICC_SRE_EL2 access; ICC_SRE_EL2 access pseudocode; §12.4.12 ICC_SRE_EL3.Enable",
+      "accessed": "2026-09-24",
+      "availability": "normative PDF inspected through the official Arm documentation service",
+      "resource_url": "https://documentation-service.arm.com/documentation/ihi0069/h?lang=en&rev=1",
+      "download_sha256": "4b66bedbab044103f8870f48c5fc0e00320ce8a85ca17e6568aec5334b3a2159",
+      "note": "The inspected access pseudocode traps an EL2 ICC_SRE_EL2 access to EL3 when EL3 is present and ICC_SRE_EL3.Enable is 0."
     },
     {
       "id": "ARM-SMMUV2",
