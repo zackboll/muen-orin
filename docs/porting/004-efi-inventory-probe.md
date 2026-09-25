@@ -114,3 +114,86 @@ doubles are not a substitute. Nothing was run on Orin; the hardware gate
 in the probe README is unchanged. Existing Muen/Xilinx runtime baseline and
 recipe/submodule pins are unchanged, and a cross-build satisfies none of the
 Task 003 post-exit gates.
+
+## Final corrective revision (review gate)
+
+Previous reviewed head: `dc608fba4762c940ffaceb9ad7f5da5c3b60ab92`.
+Before editing, local HEAD, pushed branch and PR #4 head all matched it;
+the working tree was clean, PR #4 was open against `main`, unmerged, and
+auto-merge was disabled. This correction stays on the same branch and PR.
+
+### Cleanup semantics
+
+Each successful allocation receives exactly one FreePool attempt, not a
+guarantee of successful release. A non-success status is recorded in
+`release_status`, stops map retries, and is returned if output succeeds.
+After initial argument/console checks, return precedence is first
+OutputString error, then first FreePool non-success, then record truncation,
+then normal success. An unexpected FreePool warning also does not establish
+release and is returned unchanged. No ResetSystem, ExitBootServices, retry,
+persistence, or other cleanup recovery was added.
+
+The firmware double no longer frees or marks an allocation released when
+FreePool fails. Successful allocations, release attempts, successful
+releases, live allocations after application return, and foreign/double
+attempts are tracked separately. Remaining host allocations are forcibly
+disposed of only after application return, as harness cleanup.
+
+Regressions cover successful release returning success; a normal map with
+failed release reporting and returning the cleanup status; BUFFER_TOO_SMALL
+with failed release making only one allocation/release attempt; distinct
+output/cleanup errors with output taking priority; no release retry/double
+free; unexpected cleanup warnings; and cleanup taking priority over the
+small-record truncation status.
+
+### Nested DT ordering
+
+The root-only flag is replaced by `DT_DEPTH_LIMIT` bytes of per-node state.
+Every parent rejects properties after its first child, including nested
+parents. State is initialized/cleared on node entry/exit; NOPs do not affect
+it. Regressions exercise root property-before-child (valid), root
+child-before-property (malformed), nested property-before-grandchild
+(valid), nested grandchild-before-property (malformed), all with and without
+NOPs, and state reuse for siblings. The bounded metadata-reader scope is
+unchanged; this is not a full semantic DT validator.
+
+### Validation and artifact
+
+- GCC 14.2.0 and Clang 19.1.7, each at `-O0`/`-O2`, ASan+UBSan with
+  non-recovering sanitizer errors: 99 cases per variant, all passing.
+  Strict record checks: 68 captured records per variant, zero failures
+  (intentional empty/partial output cases retain their explicit exceptions).
+- Small-record build (`RECORD_CAPACITY=512`): normal truncation and
+  truncation with failed cleanup, both passing; two strict marker decodes
+  passed. Full `make test` exited 0.
+- Mutation checks in isolated temporary source copies, Clang 19.1.7 `-O2`
+  with ASan+UBSan: restoring cleanup-success return fails
+  `t_map_release_failure` (exit 1); restoring root-only ordering fails
+  `t_dt_nested_order` both with and without NOPs (exit 1).
+- DTC 1.6.1 fixture regeneration/check: identical. Existing repository
+  tests: 3 passed using the existing alire-mcp Python environment
+  (`PYTHONPATH` set to this repository; the task001 environment lacks pytest).
+- Pre-commit on all seven changed files: end-of-file, trailing-whitespace
+  and codespell passed; YAML/format/shell hooks skipped (no matching files).
+  `git diff --check` passed. Recipe/submodule pins unchanged.
+- Artifact: LLVM/LLD 19.1.7, 17920 bytes, SHA-256
+  `825dfda3370ab93942316c784a540fa5987480cf13e39da4df48b2a01cde24d0`.
+  Builds in `/tmp/task004-final` and fresh `/tmp/task004-final-fresh`
+  reproduce the same hash. ARM64 (`0xAA64`), EFI application (`0xA`),
+  DYNAMIC_BASE/NX_COMPAT; `.text` R/X, `.rdata` R, `.data` R/W (not
+  executable), `.reloc` R/discardable. No imports; nine DIR64 relocations.
+  Object undefined references all resolve within the three linked objects;
+  no external runtime symbols or `__chkstk`. Disassembly inspection for
+  system-register, barrier, cache/TLB, exception and wait instructions finds
+  only `mrs x0, CurrentEL`.
+
+Generic UEFI emulator execution remains **not run**. Correction to the
+earlier availability note: the existing bob Xilinx QEMU 8.1.0 AArch64 binary
+is usable, but no AAVMF/QEMU_EFI firmware image was found locally. Host
+doubles are not firmware execution evidence. No Orin execution or media
+preparation occurred; the README hardware gate is unchanged. No Muen,
+Phase B, Task 005, dependency pins, packages or unrelated CI were changed.
+
+Exact-head GitHub check runs, status contexts and workflow runs are queried
+separately after pushing and recorded in the PR/final review handoff. Empty
+results are not passes. Stop at review; do not merge.

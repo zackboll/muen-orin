@@ -46,11 +46,14 @@ of firmware ABI compatibility.
 ## Ownership and trust boundary
 
 Every firmware pointer is borrowed and never freed. The only owned memory
-is a successful `AllocatePool` map buffer, released exactly once with
-`FreePool` on every path (tested for success, retry, rejection, allocation
+is a successful `AllocatePool` map buffer, with exactly one release attempt
+using `FreePool` on every path (tested for success, retry, rejection, allocation
 failure and release failure). A failed allocation transfers no ownership.
 A failed `FreePool` is reported in `release_status`, is not retried, and
-stops further map attempts. `HandleProtocol` returns a borrowed pointer.
+stops further map attempts. Non-success does not establish that firmware
+reclaimed the allocation; cleanup failure is an operational return failure,
+not just an observation. No retry or recovery mechanism is used.
+`HandleProtocol` returns a borrowed pointer.
 
 C code cannot check that firmware pointers are readable. The probe reads at
 most 65 CHAR16 units of `FirmwareVendor`, 256 configuration-table entries,
@@ -82,10 +85,13 @@ Validation: magic; `totalsize` within the span and 1 MiB; reservation map
 blocks inside `totalsize` and pairwise disjoint; reservation map terminated
 by a zero entry before the next block, with non-overflowing entries; exactly
 one unnamed root node; balanced nesting of at most 64 levels; `FDT_NOP`
-anywhere; no property outside the root or after a root subnode; property
+anywhere; no property outside the root or after a child in any node; property
 lengths/names in bounds and NUL-terminated; `FDT_END` exactly at the end of
 the structure block. Anything else is `malformed` with a `detail` string.
 The parser reads only `[blob, blob + span)`.
+Ordering uses one byte per depth, bounded by `DT_DEPTH_LIMIT`; each node's
+state is initialized on entry and cleared on exit, and NOPs leave it unchanged.
+This remains a bounded metadata reader, not a full semantic DT validator.
 
 Blob validity is separate from the report limit: the root `model` has its
 own status. A valid printable-ASCII model longer than 64 bytes is
@@ -114,12 +120,19 @@ bytes). Output is sent in chunks of at most 126 CHAR16 units.
 | no system table | `EFI_INVALID_PARAMETER` |
 | no ConOut/OutputString (nothing observed or emitted) | `EFI_UNSUPPORTED` |
 | an OutputString call returns an error | that status; output stops at once |
+| output succeeds, but FreePool returned non-success | first cleanup status unchanged |
 | record exceeds the buffer; `{"schema":2,"record_truncated":true}` emitted | `EFI_BUFFER_TOO_SMALL` |
-| full record emitted | `EFI_SUCCESS` |
+| full record emitted and cleanup succeeds | `EFI_SUCCESS` |
 
 OutputString warnings (for example `EFI_WARN_UNKNOWN_GLYPH`) mean the text
-was displayed and are tolerated. Failed observations are values inside a
-successfully emitted report, not error returns.
+was displayed and are tolerated. After the initial argument/console checks,
+precedence is **first OutputString error > first FreePool non-success >
+record truncation > normal success**. Output failure takes priority because
+the report (including cleanup status) cannot be relied upon as delivered.
+Cleanup failure must not become success or be hidden by truncation. Even an
+unexpected FreePool warning is returned unchanged and stops map retries.
+Other failed observations are values inside a successfully emitted report,
+not error returns.
 
 ## Record schema 2
 
@@ -170,13 +183,20 @@ image-signature/enforcement proof. Missing DT is normal on generic firmware.
 
 ## Host tests
 
-`tests.c` runs 94 named cases (plus one small-record build) with
+`tests.c` runs 99 named cases (plus two cases in a small-record build) with
 AddressSanitizer and UndefinedBehaviorSanitizer under GCC and Clang at
 `-O0` and `-O2`. Each case resets the doubles, fills every unused
 boot/runtime/console service slot with a forbidden-call sentinel, runs
 `efi_main` or a parser, and asserts exact JSON fragments. After every case
-the harness checks zero sentinel calls and exactly-once release of every
-allocation. Firmware doubles allocate exact-size heap buffers so any
+the harness checks zero sentinel calls and exactly one release attempt per
+successful allocation, with no foreign/double-release attempts. It separately
+counts successful allocations, release attempts, successful releases, and
+live allocations after `efi_main` returns. Configured FreePool failures leave
+the host allocation live; only subsequent harness cleanup forcibly frees it.
+Regressions cover successful cleanup, failed cleanup with a normal/retry map,
+output-error precedence, truncation precedence, unexpected cleanup warnings,
+root/nested property ordering with and without NOPs, and sibling-state reuse.
+Firmware doubles allocate exact-size heap buffers so any
 over-read is a sanitizer finding. `check_records.py` then decodes each
 captured record with a strict JSON parser and checks key values.
 

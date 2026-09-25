@@ -132,7 +132,8 @@ DtResult parse_dt(const uint8_t *p, size_t available) {
     }
     const uint8_t *strings=p+off_strings;
     size_t pos=off_struct, end=(size_t)off_struct+size_struct;
-    unsigned depth=0, roots=0, root_has_child=0;
+    unsigned depth=0, roots=0;
+    uint8_t has_child[DT_DEPTH_LIMIT]={0};
     r.model_state=UNAVAILABLE;
     for (;;) {
         if (end-pos < 4) return dt_state(r,MALFORMED,"missing_end");
@@ -143,11 +144,12 @@ DtResult parse_dt(const uint8_t *p, size_t available) {
             if (!depth && roots) return dt_state(r,MALFORMED,"multiple_roots");
             if (!(pos=skip_name(p,pos,end,&name_length))) return dt_state(r,MALFORMED,"name_truncated");
             if (!depth) { if (name_length) return dt_state(r,MALFORMED,"root_name"); ++roots; }
-            else if (depth==1) root_has_child=1;
-            if (++depth > DT_DEPTH_LIMIT) return dt_state(r,UNSUPPORTED,"depth_limit");
+            if (depth==DT_DEPTH_LIMIT) return dt_state(r,UNSUPPORTED,"depth_limit");
+            if (depth) has_child[depth-1]=1;
+            has_child[depth++]=0;
         } else if (token==FDT_END_NODE) {
             if (!depth) return dt_state(r,MALFORMED,"unbalanced_end_node");
-            --depth;
+            has_child[--depth]=0;
         } else if (token==FDT_PROP) {
             if (!depth) return dt_state(r,MALFORMED,"property_outside_root");
             if (end-pos < 8) return dt_state(r,MALFORMED,"property_truncated");
@@ -157,8 +159,8 @@ DtResult parse_dt(const uint8_t *p, size_t available) {
             size_t n=name;
             while (n<size_strings && strings[n]) ++n;
             if (n==size_strings) return dt_state(r,MALFORMED,"property_name");
-            /* Properties precede subnodes; enforced for the reported root. */
-            if (depth==1 && root_has_child) return dt_state(r,MALFORMED,"property_after_subnode");
+            /* Properties precede subnodes in every node, not only the root. */
+            if (has_child[depth-1]) return dt_state(r,MALFORMED,"property_after_subnode");
             if (depth==1 && n-name==5 && strings[name]=='m' && strings[name+1]=='o' &&
                 strings[name+2]=='d' && strings[name+3]=='e' && strings[name+4]=='l')
                 take_model(&r,p+pos,len);

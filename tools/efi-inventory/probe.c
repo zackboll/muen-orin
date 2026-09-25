@@ -1,8 +1,8 @@
 #include "core.h"
 /* Ownership: every firmware pointer (system table, services, protocols,
  * configuration tables, FirmwareVendor, FDT blob) is borrowed and never
- * freed. The only owned memory is a successful AllocatePool buffer, released
- * exactly once with FreePool on every path. A failed AllocatePool transfers
+ * freed. The only owned memory is a successful AllocatePool buffer, with
+ * exactly one FreePool attempt on every path. A failed AllocatePool transfers
  * no ownership, so nothing is freed. A failed FreePool is recorded and not
  * retried; no further allocation is attempted after it.
  *
@@ -56,8 +56,8 @@ typedef struct { MapResult map; EFI_STATUS efi_status, release_status; unsigned 
 static int release(EFI_BOOT_SERVICES *bs,void *buffer,MapAcquisition *a) {
     EFI_STATUS s=bs->free_pool(buffer);
     ++a->releases;
-    if (EFI_ERROR(s) && !EFI_ERROR(a->release_status)) a->release_status=s;
-    return !EFI_ERROR(s);
+    if (s!=EFI_SUCCESS && a->release_status==EFI_SUCCESS) a->release_status=s;
+    return s==EFI_SUCCESS;
 }
 static MapResult map_fail(State s,const char *d) { MapResult r={.state=s,.detail=d}; return r; }
 /* At most MAP_ATTEMPTS allocations of at most MAP_LIMIT bytes. The returned
@@ -196,10 +196,13 @@ static void build_record(Writer *w,EFI_SYSTEM_TABLE *st,EFI_LOADED_IMAGE *loaded
  *   EFI_INVALID_PARAMETER - no system table;
  *   EFI_UNSUPPORTED       - no usable ConOut/OutputString (nothing emitted);
  *   OutputString error    - first failing status (output stopped there);
+ *   FreePool non-success  - first cleanup failure, if output succeeded;
  *   EFI_BUFFER_TOO_SMALL  - record exceeded RECORD_CAPACITY; only the
  *                           fixed truncation marker was emitted;
- *   EFI_SUCCESS           - full record emitted. Observation failures are
- *                           reported inside the record, not as errors. */
+ *   EFI_SUCCESS           - full record emitted and cleanup succeeded.
+ * Output errors outrank cleanup failure, which outranks truncation. Other
+ * observation failures remain record values. Even an unexpected FreePool
+ * warning does not establish release and is returned unchanged. */
 EFI_STATUS efi_main(EFI_HANDLE image,EFI_SYSTEM_TABLE *st) {
     if (!st) return EFI_INVALID_PARAMETER;
     if (!st->con_out || !st->con_out->output_string) return EFI_UNSUPPORTED;
@@ -226,10 +229,10 @@ EFI_STATUS efi_main(EFI_HANDLE image,EFI_SYSTEM_TABLE *st) {
     if (EFI_ERROR(s)) return s;
     if (w.truncated) {
         s=print(st,"{\"schema\":2,\"record_truncated\":true}\r\n");
-        return EFI_ERROR(s) ? s : EFI_BUFFER_TOO_SMALL;
+        return EFI_ERROR(s) ? s : map.release_status!=EFI_SUCCESS ? map.release_status : EFI_BUFFER_TOO_SMALL;
     }
     s=print(st,record);
     if (EFI_ERROR(s)) return s;
     s=print(st,"\r\n");
-    return EFI_ERROR(s) ? s : EFI_SUCCESS;
+    return EFI_ERROR(s) ? s : map.release_status;
 }

@@ -15,6 +15,9 @@ OBJECTS = ("firmware_vendor", "loaded_image", "device_path", "boot_services_map"
            "firmware_dt", "SecureBoot", "SetupMode", "CurrentEL")
 
 EXPECT = {
+    "t_map_release_failure": {("boot_services_map", "release_status"): "0x8000000000000002"},
+    "t_map_release_failure_stops_retry": {("boot_services_map", "release_status"): "0x8000000000000002",
+                                          ("boot_services_map", "attempts"): 1},
     "t_var_secure1_setup0": {("SecureBoot", "value"): 1, ("SetupMode", "value"): 0},
     "t_var_secure0_setup1": {("SecureBoot", "value"): 0, ("SetupMode", "value"): 1},
     "t_var_malformed_size": {("SecureBoot", "status"): "malformed", ("SetupMode", "value"): 1},
@@ -58,7 +61,8 @@ def main():
             if not raw:
                 # Cases that emit nothing (no ConOut / first output fails).
                 assert name in ("t_output_missing", "t_output_function_missing",
-                                "t_output_first_call_fails", "t_no_system_table"), "empty record"
+                                "t_output_first_call_fails", "t_output_and_cleanup_failure",
+                                "t_no_system_table"), "empty record"
                 continue
             assert len(raw) < RECORD_CAPACITY, "record exceeds bound"
             assert all(0x20 <= b < 0x7F for b in raw), "non-printable-ASCII byte"

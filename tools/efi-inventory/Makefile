@@ -48,6 +48,7 @@ test-small: | $(TEST_OUT)
 	$(HOST_CC) $(HOST_FLAGS) -O2 $(SAN) -DRECORD_CAPACITY=512 -DSMALL_RECORD_TEST $(HOST_SRC) -o $(TEST_OUT)/small
 	rm -rf $(TEST_OUT)/small.records && mkdir -p $(TEST_OUT)/small.records
 	$(TEST_OUT)/small $(TEST_OUT)/small.records t_record_truncated
+	$(TEST_OUT)/small $(TEST_OUT)/small.records t_record_truncated_cleanup_failure
 	$(PYTHON) check_records.py $(TEST_OUT)/small.records --small
 # Regenerate fixtures.h with an external dtc and require no difference.
 fixtures-check: | $(TEST_OUT)

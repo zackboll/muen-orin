@@ -21,6 +21,7 @@ static struct {
     MapStep steps[MAX_ALLOCS]; unsigned nsteps, map_calls;
     EFI_MEMORY_DESCRIPTOR custom; int use_custom;
     void *live[MAX_ALLOCS]; size_t sizes[MAX_ALLOCS]; unsigned allocs, frees, bad_frees, alloc_calls;
+    unsigned release_attempts, live_after_return, tried[MAX_ALLOCS];
     unsigned alloc_fail_at; int alloc_null; EFI_STATUS free_status;
     EFI_STATUS var_status[2]; size_t var_size[2]; uint8_t var_value[2]; unsigned var_calls[2], var_bad;
     unsigned out_calls, out_fail_at, out_overlong; EFI_STATUS out_fail_status, out_status;
@@ -48,11 +49,15 @@ static EFI_STATUS alloc(uint32_t type,size_t n,void **p) {
     CHECK(fw.allocs<MAX_ALLOCS);
     if (fw.allocs>=MAX_ALLOCS) return EFI_OUT_OF_RESOURCES;
     *p=malloc(n);   /* exact size: any read past n is an ASan finding */
+    if (!*p) return EFI_OUT_OF_RESOURCES;
     fw.live[fw.allocs]=*p; fw.sizes[fw.allocs]=n; ++fw.allocs;
     return EFI_SUCCESS;
 }
 static EFI_STATUS release(void *p) {
+    ++fw.release_attempts;
     for (unsigned i=0;i<fw.allocs;++i) if (fw.live[i]==p && p) {
+        if (fw.tried[i]++) { ++fw.bad_frees; return EFI_INVALID_PARAMETER; }
+        if (fw.free_status!=EFI_SUCCESS) return fw.free_status;
         fw.live[i]=0; ++fw.frees; free(p); return fw.free_status;
     }
     ++fw.bad_frees; return EFI_INVALID_PARAMETER;
@@ -147,6 +152,8 @@ static const char *record(void) {
 }
 static void run(void) {
     returned=efi_main((EFI_HANDLE)&image,&st);
+    fw.live_after_return=0;
+    for (unsigned i=0;i<fw.allocs;++i) if (fw.live[i]) ++fw.live_after_return;
     char path[512]; snprintf(path,sizeof path,"%s/%s.json",record_dir,current);
     FILE *f=fopen(path,"w"); CHECK(f);
     if (f) { const char *j=record(); fwrite(j,1,strcspn(j,"\r"),f); fclose(f); }
@@ -212,6 +219,7 @@ static void t_var_service_missing(void) {
 static void map_expect(const char *status_detail) { CHECK(has(status_detail)); }
 static void t_map_ordinary(void) {
     run();
+    CHECK(returned==EFI_SUCCESS && fw.release_attempts==1 && fw.live_after_return==0);
     CHECK(fw.allocs==1 && fw.frees==1 && fw.map_calls==1 && fw.sizes[0]==MAP_INITIAL);
     map_expect("\"boot_services_map\":{\"status\":\"observed\",\"detail\":null,\"efi_status\":\"0x0000000000000000\",\"attempts\":1,\"release_status\":\"0x0000000000000000\",\"count\":3,\"descriptor_stride\":40,\"descriptor_version\":1");
     CHECK(has("{\"type\":2,\"physical\":\"0x0000000080010000\",\"pages\":2,\"attributes\":\"0x8000000000000001\"}"));
@@ -275,19 +283,32 @@ static void t_map_allocation_null(void) {
 }
 static void t_map_release_failure(void) {
     fw.free_status=EFI_INVALID_PARAMETER; run();
-    CHECK(fw.allocs==1 && fw.frees==1);
+    CHECK(returned==EFI_INVALID_PARAMETER);
+    CHECK(fw.allocs==1 && fw.release_attempts==1 && fw.frees==0 && fw.live_after_return==1);
     map_expect("\"status\":\"observed\",\"detail\":null,\"efi_status\":\"0x0000000000000000\",\"attempts\":1,\"release_status\":\"0x8000000000000002\"");
 }
 static void t_map_release_failure_stops_retry(void) {
     fw.free_status=EFI_INVALID_PARAMETER; fw.nsteps=2;
     fw.steps[0]=(MapStep){EFI_BUFFER_TOO_SMALL,6000,40,1,0}; fw.steps[1]=(MapStep){EFI_SUCCESS,40,40,1,1}; run();
-    CHECK(fw.allocs==1 && fw.frees==1 && fw.map_calls==1);
+    CHECK(returned==EFI_INVALID_PARAMETER);
+    CHECK(fw.alloc_calls==1 && fw.allocs==1 && fw.release_attempts==1 && fw.frees==0);
+    CHECK(fw.map_calls==1 && fw.live_after_return==1);
     map_expect("\"status\":\"not_probed\",\"detail\":\"release_failed\"");
 }
 static void t_map_service_error(void) {
     fw.steps[0]=(MapStep){EFI_INVALID_PARAMETER,0,0,0,0}; run();
     CHECK(fw.frees==1);
     map_expect("\"status\":\"unavailable\",\"detail\":\"efi_error\",\"efi_status\":\"0x8000000000000002\"");
+}
+static void t_cleanup_warning(void) {
+    fw.free_status=EFI_WARN_UNKNOWN_GLYPH; run();
+    CHECK(returned==EFI_WARN_UNKNOWN_GLYPH && fw.frees==0 && fw.live_after_return==1);
+}
+static void t_output_and_cleanup_failure(void) {
+    fw.free_status=EFI_INVALID_PARAMETER;
+    fw.out_fail_at=1; fw.out_fail_status=EFI_DEVICE_ERROR; run();
+    CHECK(returned==EFI_DEVICE_ERROR && fw.out_calls==1);
+    CHECK(fw.allocs==1 && fw.release_attempts==1 && fw.frees==0 && fw.live_after_return==1);
 }
 static void t_map_service_missing(void) {
     bs.get_memory_map=0; run();
@@ -536,6 +557,32 @@ static void t_dt_truncated_data(void) {
     BUILD("model\0",1,0,3,4,6,0,2,9);      dt_bad(built,built_size,MALFORMED,"property_name");
     BUILD("model",1,0,3,4,0,0,2,9);        dt_bad(built,built_size,MALFORMED,"property_name");
 }
+static void t_dt_root_order(void) {
+    BUILD("p\0",1,0,3,0,0,1,NAME('c',0,0,0),2,2,9);
+    CHECK(dt_of(built,built_size).state==OBSERVED);
+    BUILD("p\0",1,0,1,NAME('c',0,0,0),2,3,0,0,2,9);
+    dt_bad(built,built_size,MALFORMED,"property_after_subnode");
+    BUILD("p\0",4,1,0,4,3,0,0,4,1,NAME('c',0,0,0),4,2,4,2,4,9);
+    CHECK(dt_of(built,built_size).state==OBSERVED);
+    BUILD("p\0",4,1,0,4,1,NAME('c',0,0,0),4,2,4,3,0,0,4,2,9);
+    dt_bad(built,built_size,MALFORMED,"property_after_subnode");
+}
+static void t_dt_nested_order(void) {
+    BUILD("p\0",1,0,1,NAME('c',0,0,0),3,0,0,1,NAME('g',0,0,0),2,2,2,9);
+    CHECK(dt_of(built,built_size).state==OBSERVED);
+    BUILD("p\0",1,0,1,NAME('c',0,0,0),1,NAME('g',0,0,0),2,3,0,0,2,2,9);
+    dt_bad(built,built_size,MALFORMED,"property_after_subnode");
+    BUILD("p\0",4,1,0,4,1,NAME('c',0,0,0),4,3,0,0,4,1,NAME('g',0,0,0),4,2,4,2,4,2,9);
+    CHECK(dt_of(built,built_size).state==OBSERVED);
+    BUILD("p\0",4,1,0,4,1,NAME('c',0,0,0),4,1,NAME('g',0,0,0),4,2,4,3,0,0,4,2,4,2,9);
+    dt_bad(built,built_size,MALFORMED,"property_after_subnode");
+}
+static void t_dt_sibling_order_state(void) {
+    /* A child in c must not prevent properties in its later sibling s. */
+    BUILD("p\0",1,0,1,NAME('c',0,0,0),1,NAME('g',0,0,0),2,2,4,
+          1,NAME('s',0,0,0),4,3,0,0,4,1,NAME('h',0,0,0),2,2,2,9);
+    CHECK(dt_of(built,built_size).state==OBSERVED);
+}
 static void t_dt_model_value_edge_cases(void) {
     BUILD("model\0",1,0,3,0,0,2,9);                      /* zero-length model */
     DtResult r=dt_of(built,built_size); CHECK(r.state==OBSERVED && r.model_state==MALFORMED);
@@ -770,6 +817,11 @@ static void t_record_truncated(void) {
     CHECK(!strcmp(fw.console,"EFI inventory Phase A: boot-services snapshot; returning to caller\r\n{\"schema\":2,\"record_truncated\":true}\r\n"));
     CHECK(fw.frees==fw.allocs);
 }
+static void t_record_truncated_cleanup_failure(void) {
+    fw.free_status=EFI_INVALID_PARAMETER; run();
+    CHECK(returned==EFI_INVALID_PARAMETER && has("\"record_truncated\":true}"));
+    CHECK(fw.release_attempts==1 && fw.frees==0 && fw.live_after_return==1);
+}
 #endif
 /* The sentinel mechanism itself must be observable. */
 static void t_sentinel_self_check(void) {
@@ -788,6 +840,7 @@ typedef struct { const char *name; void (*fn)(void); } Case;
 static const Case cases[]={
 #ifdef SMALL_RECORD_TEST
     C(t_record_truncated),
+    C(t_record_truncated_cleanup_failure),
 #endif
     C(t_sentinel_self_check),
     C(t_var_secure1_setup0),C(t_var_secure0_setup1),C(t_var_malformed_size),C(t_var_invalid_value),
@@ -797,6 +850,7 @@ static const Case cases[]={
     C(t_map_retry_exhaustion),C(t_map_size_limit),C(t_map_too_small_inconsistent),C(t_map_too_small_bad_stride),
     C(t_map_allocation_failure),C(t_map_allocation_failure_on_retry),C(t_map_allocation_null),
     C(t_map_release_failure),C(t_map_release_failure_stops_retry),C(t_map_service_error),C(t_map_service_missing),
+    C(t_cleanup_warning),C(t_output_and_cleanup_failure),
     C(t_map_unsupported_version),C(t_map_partial_descriptor),C(t_map_short_stride),C(t_map_empty),
     C(t_map_page_overflow),C(t_map_range_overflow),C(t_map_virtual_overflow),C(t_map_exact_end),
     C(t_map_unaligned),C(t_map_omitted),C(t_map_helpers),
@@ -805,6 +859,7 @@ static const Case cases[]={
     C(t_dt_incompatible_versions),C(t_dt_overlap_reviewed_fixture),C(t_dt_overlap_strings),C(t_dt_bounds),
     C(t_dt_alignment),C(t_dt_totalsize),C(t_dt_rsvmap_unterminated),C(t_dt_rsvmap_range),
     C(t_dt_builder_matches_dtc),C(t_dt_multiple_roots),C(t_dt_property_outside_root),
+    C(t_dt_root_order),C(t_dt_nested_order),C(t_dt_sibling_order_state),
     C(t_dt_nesting_and_termination),C(t_dt_truncated_data),C(t_dt_model_value_edge_cases),C(t_dt_firmware_entry),
     C(t_report_dt_model),C(t_report_dt_model_truncated),C(t_report_dt_model_escape),C(t_report_dt_absent),
     C(t_report_dt_no_tables),C(t_report_dt_search_limit),C(t_report_dt_at_search_limit),
@@ -824,11 +879,17 @@ int main(int argc,char **argv) {
         if (only && strcmp(only,cases[i].name)) continue;
         current=cases[i].name; case_failed=0; reset();
         cases[i].fn();
-        /* Invariants for every case: no forbidden call, every successful
-         * allocation released exactly once, no foreign/double free. */
+        /* Count application outcomes before forced host-only disposal.
+         * A failed FreePool leaves the allocation live, never released. */
         CHECK(fw.forbidden==0);
-        CHECK(fw.frees==fw.allocs && fw.bad_frees==0);
-        for (unsigned a=0;a<fw.allocs;++a) CHECK(fw.live[a]==0);
+        CHECK(fw.release_attempts==fw.allocs && fw.bad_frees==0);
+        CHECK(fw.frees+fw.live_after_return==fw.allocs);
+        CHECK(fw.free_status==EFI_SUCCESS ? fw.live_after_return==0 : fw.frees==0);
+        for (unsigned a=0;a<fw.allocs;++a) {
+            CHECK(fw.tried[a]==1);
+            free(fw.live[a]);   /* harness cleanup only, after efi_main */
+            fw.live[a]=0;
+        }
         ++ran;
         if (case_failed) ++failed;
         printf("%s %s\n",case_failed ? "FAIL" : "ok  ",current);
