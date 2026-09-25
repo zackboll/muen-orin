@@ -52,6 +52,16 @@ The task created, without replacing an existing directory, the dedicated venv
   /home/zboll/.local/share/muen-orin/task002-venv
 ```
 
+For every replay shell, activate that environment persistently before running
+any command below that invokes Bob, NCI, or `contrib/runQemu.py`:
+
+```sh
+export PATH=/home/zboll/.local/share/muen-orin/task002-venv/bin:$PATH
+```
+
+The per-command `PATH=...` prefixes retained below are equivalent and remain
+part of the historical command record.
+
 The pinned `ci/nci/setup_venv.sh` was inspected but not run because it copies
 interpreter-specific extension bindings into the venv. Instead,
 `--system-site-packages` exposed the matching distro bindings without copying
